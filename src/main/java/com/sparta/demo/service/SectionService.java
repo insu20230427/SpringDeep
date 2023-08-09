@@ -26,7 +26,7 @@ public class SectionService {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 보드"));
         Section section = new Section(columnName, board);
-        
+
         sectionRepository.save(section);
     }
 
@@ -38,7 +38,7 @@ public class SectionService {
 
     //섹션 수정
     @Transactional
-    public void updateSection(Long section_id, SectionRequestDto sectionRequestDto){
+    public void updateSection(Long section_id, SectionRequestDto sectionRequestDto) {
         Section section = sectionRepository.findById(section_id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션"));
         String columnName = sectionRequestDto.getColumnName();
         section.updateSection(columnName);
@@ -51,7 +51,7 @@ public class SectionService {
     }
 
     //특정 섹션 조회
-    private Section findSection(Long id){
+    private Section findSection(Long id) {
         return sectionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션"));
     }
 }
