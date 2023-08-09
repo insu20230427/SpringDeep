@@ -7,16 +7,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 public class ApiResponseDto {
+    private int status;
+    private String message;
+    private Object data;
 
-    private String msg;
-    private Integer statusCode;
+    public ApiResponseDto(String message, int status) {
+        this.status = status;
+        this.message = message;
+        this.data = null;
+    }
 
-    public ApiResponseDto(String msg, Integer statusCode){
-        this.msg = msg;
-        this.statusCode = statusCode;
+    public ApiResponseDto(int status,String message, Object data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 }
