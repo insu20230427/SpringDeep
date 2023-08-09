@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trello-like App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 90px;
+            padding: 0;
+            background-image: url('https://i.postimg.cc/PJSPCxY2/1.png');
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-color: white;
+        }
+
+        .board-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start; /* Left alignment */
+            align-items: flex-start; /* Top alignment */
+            padding: 20px; /* Padding added for better spacing */
+            min-height: 100vh;
+        }
+
+        .board {
+            position: relative;
+            border-radius: 10px; /* Increased the border radius */
+            margin: 20px; /* Reduced margin */
+            padding: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: #fff; /* Text color */
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+        }
+
+        .color-options {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 40px; /* Bigger size */
+            height: 40px; /* Bigger size */
+            margin: 0 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.red { background-color: red; }
+        .color-option.blue { background-color: blue; }
+        .color-option.yellow { background-color: yellow; } /* Changed green to yellow */
+
+        .add-board {
+            border-radius: 50%; /* Circular shape */
+            margin: 40px 20px 40px 20px;
+            padding: 30px;
+            font-size: 32px; /* Bigger font size */
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .add-board:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .folder-icon {
+            width: 100px; /* Adjust the size as needed */
+            height: 80px; /* Adjust the size as needed */
+            background-image: url('http://pluspng.com/img-png/folder-png-folder-icon-1600.png'); /* Update with the folder icon image URL */
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin: 0 auto;
+        }
+        .login-signup-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px; /* Add some top margin for spacing */
+        }
+        .login-signup-buttons {
+            display: flex;
+            gap: 10px; /* Add some gap between buttons */
+        }
+    </style>
+</head>
+<div class="login-signup-container">
+    <div class="login-signup-buttons">
+        <button onclick="openLoginForm()">Login</button>
+        <button onclick="openSignupForm()">Sign Up</button>
+    </div>
+</div>
+<body>
+<div class="board-list">
+    <div class="add-board" onclick="createBoard()">+</div>
+
+</div>
+
+
+<script>
+    function openBoard(boardName) {
+        // Redirect to the card.html page for the selected board
+        window.location.href = `card.html?board=${encodeURIComponent(boardName)}`;
+    }
+
+    function createBoard() {
+        const newBoardName = prompt("Enter the name of the new board:");
+        if (newBoardName) {
+            const colorContainer = document.createElement("div");
+            colorContainer.className = "color-options";
+
+            const colorOptions = ['red', 'blue', 'yellow']; /* Changed green to yellow */
+            colorOptions.forEach(color => {
+                const colorOption = document.createElement("div");
+                colorOption.className = "color-option " + color;
+                colorOption.addEventListener("click", function() {
+                    createNewBoard(newBoardName, color);
+                    colorContainer.remove();
+                });
+                colorContainer.appendChild(colorOption);
+            });
+
+            document.querySelector(".board-list").appendChild(colorContainer);
+        }
+    }
+
+    function createNewBoard(boardName, color = "#f39c12") {
+        const newBoard = document.createElement("div");
+        newBoard.className = "board";
+        newBoard.style.backgroundColor = color;
+        newBoard.innerHTML = '<div class="folder-icon"></div><br>' + boardName;
+
+        newBoard.addEventListener("click", function() {
+            openBoard(boardName);
+        });
+
+        document.querySelector(".board-list").appendChild(newBoard);
+    }
+    function openLoginForm() {
+        window.location.href = "login.html";
+    }
+
+    function openSignupForm() {
+        window.location.href = "signup.html";
+    }
+
+    // Initial creation of the boards
+    createNewBoard("Board 1", "red");
+    createNewBoard("Board 2", "blue");
+</script>
+</body>
+</html>
