@@ -1,5 +1,6 @@
 package com.sparta.demo.entity;
 
+import com.sparta.demo.dto.CardRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,5 +41,17 @@ public class Card {
     List<Comment> commentList = new ArrayList<>();
 
 
+    public Card(CardRequestDto requestDto, User user) {
+        username = user.getUsername();
+        title = requestDto.getTitle();
+        content = requestDto.getContent();
+        color = requestDto.getColor();
+        this.user = user;
+    }
 
+    public void update(CardRequestDto requestDto) {
+        title = requestDto.getTitle();
+        content = requestDto.getContent();
+        color = requestDto.getColor();
+    }
 }
