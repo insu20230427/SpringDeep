@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trello-like App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .board {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 10px;
+        }
+
+        .list {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-right: 10px;
+            padding: 10px;
+            min-width: 300px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="board">
+    <div class="list">
+        <h3>List 1</h3>
+        <div class="card">Card 1</div>
+        <div class="card">Card 2</div>
+        <div class="card">Card 3</div>
+    </div>
+    <div class="list">
+        <h3>List 2</h3>
+        <div class="card">Card 4</div>
+        <div class="card">Card 5</div>
+    </div>
+    <div class="list">
+        <h3>List 3</h3>
+        <div class="card">Card 6</div>
+    </div>
+</div>
+</body>
+</html>
