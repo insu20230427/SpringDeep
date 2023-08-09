@@ -31,25 +31,133 @@
             margin-bottom: 10px;
             padding: 5px;
         }
+
+        .add-list-button,
+        .add-card-button {
+            background-color: #ccc;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+
+        .input-field {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            width: 100%;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .color-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .color-icon.selected {
+            border: 2px solid #000;
+        }
     </style>
 </head>
 <body>
 <div class="board">
-    <div class="list">
-        <h3>List 1</h3>
-        <div class="card">Card 1</div>
-        <div class="card">Card 2</div>
-        <div class="card">Card 3</div>
-    </div>
-    <div class="list">
-        <h3>List 2</h3>
-        <div class="card">Card 4</div>
-        <div class="card">Card 5</div>
-    </div>
-    <div class="list">
-        <h3>List 3</h3>
-        <div class="card">Card 6</div>
-    </div>
+    <!-- Lists and cards -->
+    <div class="add-list-button" onclick="createListInput()">+</div>
 </div>
+
+<script>
+    function createListInput() {
+        const inputContainer = document.createElement("div");
+        inputContainer.innerHTML = `
+            <input type="text" class="input-field" placeholder="Enter list name">
+            <button class="add-card-button" onclick="createListFromInput(this)">Add List</button>
+        `;
+        document.querySelector(".board").insertBefore(inputContainer, document.querySelector(".add-list-button"));
+    }
+
+    function createListFromInput(buttonElement) {
+        const inputField = buttonElement.previousElementSibling;
+        const listName = inputField.value;
+        if (listName.trim() !== "") {
+            const newList = document.createElement("div");
+            newList.className = "list";
+            newList.innerHTML = `<h3>${listName}</h3><button class="add-card-button" onclick="createCardFromInput(this)">Add Card</button>`;
+            document.querySelector(".board").insertBefore(newList, buttonElement.parentElement);
+        }
+        buttonElement.parentElement.remove();
+    }
+
+     function createCardFromInput(buttonElement) {
+        const cardContainer = document.createElement("div");
+        cardContainer.className = "card";
+
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.className = "input-field";
+        inputField.placeholder = "Enter card title";
+
+        const contentField = document.createElement("textarea");
+        contentField.className = "input-field";
+        contentField.placeholder = "Enter card contents";
+
+         const colorIconsContainer = document.createElement("div");
+         colorIconsContainer.className = "input-field";
+         colorIconsContainer.innerHTML = `
+            <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
+        `;
+
+         const addCardButton = document.createElement("button");
+         addCardButton.className = "add-card-button";
+         addCardButton.innerText = "Add Card";
+         addCardButton.onclick = function () {
+             const cardTitle = inputField.value;
+             const cardContent = contentField.value;
+             const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
+
+             if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
+                 const newCard = document.createElement("div");
+                 newCard.className = "card";
+                 newCard.style.backgroundColor = selectedColor;
+                 newCard.innerHTML = `
+                    <h4>${cardTitle}</h4>
+                    <p>${cardContent}</p>
+                `;
+                 cardContainer.insertBefore(newCard, addCardButton);
+                 inputField.value = ""; // Clear the input fields for the next card
+                 contentField.value = "";
+                 cardContainer.removeChild(inputField);
+                 cardContainer.removeChild(contentField);
+                 cardContainer.removeChild(colorIconsContainer);
+                 cardContainer.removeChild(addCardButton);
+                 selectedColorIcon.classList.remove("selected");
+                 selectedColorIcon = null;
+             }
+         };
+
+         cardContainer.appendChild(inputField);
+         cardContainer.appendChild(contentField);
+         cardContainer.appendChild(colorIconsContainer);
+         cardContainer.appendChild(addCardButton);
+         buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
+     }
+
+    let selectedColorIcon = null;
+
+    function selectColor(colorIcon) {
+        if (selectedColorIcon) {
+            selectedColorIcon.classList.remove("selected");
+        }
+        selectedColorIcon = colorIcon;
+        colorIcon.classList.add("selected");
+    }
+</script>
 </body>
 </html>
