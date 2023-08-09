@@ -1,5 +1,6 @@
 package com.sparta.demo.entity;
 
+import com.sparta.demo.dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,4 +30,14 @@ public class Comment {
     @JoinColumn(name = "card_id")
     private Card card;
 
+    public Comment(CommentRequestDto requestDto, User user, Card card) {
+        username = user.getUsername();
+        content = requestDto.getContent();
+        this.user = user;
+        this.card = card;
+    }
+
+    public void update(CommentRequestDto requestDto) {
+        content = requestDto.getContent();
+    }
 }

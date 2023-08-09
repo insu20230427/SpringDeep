@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CardRequestDto {
-    private Long sectionId;
-    private String title;
+public class CommentRequestDto {
+
+    private Long cardId;
     private String content;
-    private String color;
 }

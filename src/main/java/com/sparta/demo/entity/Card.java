@@ -41,10 +41,17 @@ public class Card {
     List<Comment> commentList = new ArrayList<>();
 
 
-    public Card(CardRequestDto requestDto) {
-        username = requestDto.getUsername();
+    public Card(CardRequestDto requestDto, User user) {
+        username = user.getUsername();
         title = requestDto.getTitle();
-        content = requestDto.getTitle();
+        content = requestDto.getContent();
+        color = requestDto.getColor();
+        this.user = user;
+    }
+
+    public void update(CardRequestDto requestDto) {
+        title = requestDto.getTitle();
+        content = requestDto.getContent();
         color = requestDto.getColor();
     }
 }
