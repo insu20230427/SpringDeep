@@ -49,8 +49,8 @@ public class BoardService {
         Optional<Board> board = boardRepository.findById(id);
 
         if (!board.isPresent() || !Objects.equals(board.get().getUser().getUsername(), user.getUsername())) {
-            log.error("게시글이 존재하지 않거나 수정 권한이 없습니다.");
-            return ResponseEntity.status(400).body(new ApiResponseDto("보드 삭제 실패", HttpStatus.BAD_REQUEST.value()));
+            log.error("보드가 존재하지 않습니다.");
+            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "보드 수정 실패"));
         }
 
         boardRepository.delete(board.get());
@@ -58,17 +58,18 @@ public class BoardService {
         return ResponseEntity.status(200).body(new ApiResponseDto("보드 삭제 성공", HttpStatus.OK.value()));
     }
 
-    public BoardResponseDto updateBoard(Long id, BoardRequestDto requestDto, User user) {
+    public ResponseEntity<ApiResponseDto> updateBoard(Long id, BoardRequestDto requestDto, User user) {
         Board board = findBoard(id);
 
         if (!Objects.equals(board.getUser().getUsername(), user.getUsername())) {
-            throw new IllegalArgumentException("수정 권한이 없습니다.");
+            log.error("보드가 존재하지 않거나, 수정 권한이 없습니다.");
+            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "보드 수정 실패"));
         }
 
         board.setBoardname(requestDto.getBoardname());
         board.setBoardDescription(requestDto.getBoardDescription());
         board.setBoardColor(requestDto.getBoardColor());
 
-        return new BoardResponseDto(boardRepository.save(board));
+        return ResponseEntity.status(200).body(new ApiResponseDto(HttpStatus.OK.value(),"보드 수정 성공",new BoardResponseDto(boardRepository.save(board))));
     }
 }
