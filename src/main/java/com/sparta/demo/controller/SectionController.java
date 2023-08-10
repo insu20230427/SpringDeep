@@ -1,8 +1,8 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.ApiResponseDto;
-import com.sparta.demo.dto.SectionRequestDto;
-import com.sparta.demo.dto.SectionResponseDto;
+import com.sparta.demo.dto.response.ApiResponseDto;
+import com.sparta.demo.dto.reuqest.SectionRequestDto;
+import com.sparta.demo.dto.response.SectionResponseDto;
 import com.sparta.demo.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

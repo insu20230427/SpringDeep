@@ -1,7 +1,7 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.CardRequestDto;
-import com.sparta.demo.dto.CardResponseDto;
+import com.sparta.demo.dto.response.CardResponseDto;
+import com.sparta.demo.dto.reuqest.CardRequestDto;
 import com.sparta.demo.entity.Card;
 import com.sparta.demo.entity.Section;
 import com.sparta.demo.entity.User;

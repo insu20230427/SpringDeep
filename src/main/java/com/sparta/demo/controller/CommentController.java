@@ -1,12 +1,11 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.CommentRequestDto;
-import com.sparta.demo.dto.CommentResponseDto;
+import com.sparta.demo.dto.reuqest.CommentRequestDto;
+import com.sparta.demo.dto.response.CommentResponseDto;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.CommentService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -1,6 +1,6 @@
 package com.sparta.demo.entity;
 
-import com.sparta.demo.dto.CardRequestDto;
+import com.sparta.demo.dto.reuqest.CardRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

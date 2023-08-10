@@ -1,10 +1,9 @@
 package com.sparta.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.demo.dto.BoardRequestDto;
+import com.sparta.demo.dto.reuqest.BoardRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
