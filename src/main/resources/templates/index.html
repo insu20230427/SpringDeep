@@ -111,7 +111,7 @@
 <script>
     function openBoard(boardName) {
         // Redirect to the card.html page for the selected board
-        window.location.href = `card.html?board=${encodeURIComponent(boardName)}`;
+        window.location.href = "/card-page";
     }
 
     function createBoard() {
@@ -148,11 +148,11 @@
         document.querySelector(".board-list").appendChild(newBoard);
     }
     function openLoginForm() {
-        window.location.href = "login.html";
+        window.location.href = "/login-page";
     }
 
     function openSignupForm() {
-        window.location.href = "signup.html";
+        window.location.href = "/signup-page";
     }
 
     // Initial creation of the boards
