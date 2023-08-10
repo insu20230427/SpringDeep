@@ -30,6 +30,7 @@
             border-radius: 5px;
             margin-bottom: 10px;
             padding: 5px;
+            cursor: pointer; /* Add cursor style to indicate clickability */
         }
 
         .add-list-button,
@@ -51,6 +52,7 @@
             display: block;
             margin-bottom: 5px;
         }
+
         .color-icon {
             width: 24px;
             height: 24px;
@@ -62,6 +64,30 @@
 
         .color-icon.selected {
             border: 2px solid #000;
+        }
+
+        .editing {
+            border: 1px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .context-menu {
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            z-index: 1000;
+        }
+
+        .context-menu button {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -93,9 +119,9 @@
         buttonElement.parentElement.remove();
     }
 
-     function createCardFromInput(buttonElement) {
+    function createCardFromInput(buttonElement) {
         const cardContainer = document.createElement("div");
-        cardContainer.className = "card";
+        cardContainer.className = "card-container";
 
         const inputField = document.createElement("input");
         inputField.type = "text";
@@ -106,48 +132,76 @@
         contentField.className = "input-field";
         contentField.placeholder = "Enter card contents";
 
-         const colorIconsContainer = document.createElement("div");
-         colorIconsContainer.className = "input-field";
-         colorIconsContainer.innerHTML = `
-            <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
-            <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
-            <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
-        `;
+        const colorIconsContainer = document.createElement("div");
+        colorIconsContainer.className = "input-field";
+        colorIconsContainer.innerHTML = `
+        <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
+        <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
+        <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
+    `;
 
-         const addCardButton = document.createElement("button");
-         addCardButton.className = "add-card-button";
-         addCardButton.innerText = "Add Card";
-         addCardButton.onclick = function () {
-             const cardTitle = inputField.value;
-             const cardContent = contentField.value;
-             const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
+        const addCardButton = document.createElement("button");
+        addCardButton.className = "add-card-button";
+        addCardButton.innerText = "Add Card";
 
-             if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
-                 const newCard = document.createElement("div");
-                 newCard.className = "card";
-                 newCard.style.backgroundColor = selectedColor;
-                 newCard.innerHTML = `
-                    <h4>${cardTitle}</h4>
-                    <p>${cardContent}</p>
-                `;
-                 cardContainer.insertBefore(newCard, addCardButton);
-                 inputField.value = ""; // Clear the input fields for the next card
-                 contentField.value = "";
-                 cardContainer.removeChild(inputField);
-                 cardContainer.removeChild(contentField);
-                 cardContainer.removeChild(colorIconsContainer);
-                 cardContainer.removeChild(addCardButton);
-                 selectedColorIcon.classList.remove("selected");
-                 selectedColorIcon = null;
-             }
-         };
+        addCardButton.onclick = function () {
+            const cardTitle = inputField.value;
+            const cardContent = contentField.value;
+            const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
 
-         cardContainer.appendChild(inputField);
-         cardContainer.appendChild(contentField);
-         cardContainer.appendChild(colorIconsContainer);
-         cardContainer.appendChild(addCardButton);
-         buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
-     }
+            if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
+                const newCard = document.createElement("div");
+                newCard.className = "card";
+                newCard.style.backgroundColor = selectedColor;
+
+                const cardTitleElement = document.createElement("h4");
+                cardTitleElement.textContent = cardTitle;
+
+                const cardContentElement = document.createElement("p");
+                cardContentElement.textContent = cardContent;
+
+                const editButton = document.createElement("button");
+                editButton.className = "edit-card-button";
+                editButton.innerText = "Edit";
+                editButton.onclick = function () {
+                    if (editButton.innerText === "Edit") {
+                        editCard(newCard, editButton);
+                    } else {
+                        saveEditedCard(newCard, editButton);
+                    }
+                };
+
+                newCard.appendChild(cardTitleElement);
+                newCard.appendChild(cardContentElement);
+                newCard.appendChild(editButton);
+
+                cardContainer.appendChild(newCard);
+
+                inputField.value = "";
+                contentField.value = "";
+                cardContainer.removeChild(inputField);
+                cardContainer.removeChild(contentField);
+                cardContainer.removeChild(colorIconsContainer);
+                cardContainer.removeChild(addCardButton);
+                selectedColorIcon.classList.remove("selected");
+                selectedColorIcon = null;
+            }
+        };
+
+        cardContainer.appendChild(inputField);
+        cardContainer.appendChild(contentField);
+        cardContainer.appendChild(colorIconsContainer);
+        cardContainer.appendChild(addCardButton);
+
+        buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
+
+        // Hide the second "Add Card" button
+        buttonElement.style.display = "none";
+    }
+
+
+
+
 
     let selectedColorIcon = null;
 
@@ -158,6 +212,100 @@
         selectedColorIcon = colorIcon;
         colorIcon.classList.add("selected");
     }
+
+    function editListName(listElement) {
+        const listNameElement = listElement.querySelector('h3');
+        const currentListName = listNameElement.textContent;
+
+        const newName = prompt('Edit list name:', currentListName);
+
+        if (newName && newName.trim() !== "") {
+            listNameElement.textContent = newName;
+        }
+    }
+
+    function editCard(cardElement) {
+        const cardTitleElement = cardElement.querySelector('h4');
+        const cardContentElement = cardElement.querySelector('p');
+        const cardColor = cardElement.style.backgroundColor;
+
+        const currentCardTitle = cardTitleElement.textContent;
+        const currentCardContent = cardContentElement.textContent;
+
+        cardElement.innerHTML = `
+        <input type="text" class="input-field card-title-input" value="${currentCardTitle}">
+        <textarea class="input-field card-content-input">${currentCardContent}</textarea>
+        <div class="input-field">
+            <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
+        </div>
+        <button class="add-card-button" onclick="saveEditedCard(this.parentElement, true)">Save</button>
+    `;
+
+        // Set the background color to the original card color
+        cardElement.style.backgroundColor = cardColor;
+
+        // Restore selected color if available
+        if (cardColor) {
+            const colorIcons = cardElement.querySelectorAll('.color-icon');
+            colorIcons.forEach(icon => {
+                if (icon.style.backgroundColor === cardColor) {
+                    selectColor(icon);
+                }
+            });
+        }
+    }
+
+
+
+    function saveEditedCard(cardElement, isEditing) {
+        const cardTitleInput = cardElement.querySelector('.card-title-input');
+        const cardContentInput = cardElement.querySelector('.card-content-input');
+        const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
+
+        const cardTitle = cardTitleInput.value;
+        const cardContent = cardContentInput.value;
+
+        if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
+            cardElement.innerHTML = `
+                <h4>${cardTitle}</h4>
+                <p>${cardContent}</p>
+                <button class="edit-card-button" onclick="editCard(this.parentElement)">Edit</button>
+                <button class="delete-card-button" onclick="deleteCard(this.parentElement)">Delete</button>
+            `;
+            cardElement.style.backgroundColor = selectedColor;
+            selectedColorIcon = null;
+        } else {
+            alert("Please fill in all fields and select a color.");
+        }
+
+        // If isEditing is true, reattach editCard event handler
+        if (isEditing) {
+            const editButton = cardElement.querySelector('.edit-card-button');
+            editButton.onclick = function () {
+                editCard(cardElement);
+            };
+        }
+    }
+
+
+
+    function deleteList(listElement) {
+        if (confirm('Are you sure you want to delete this list?')) {
+            listElement.remove();
+        }
+    }
+
+    function deleteCard(cardElement) {
+        if (confirm('Are you sure you want to delete this card?')) {
+            cardElement.remove();
+        }
+    }
 </script>
 </body>
 </html>
+
+
+
+
