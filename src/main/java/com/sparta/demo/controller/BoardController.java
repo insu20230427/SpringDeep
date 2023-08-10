@@ -1,10 +1,11 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.ApiResponseDto;
-import com.sparta.demo.dto.BoardRequestDto;
-import com.sparta.demo.dto.BoardResponseDto;
+import com.sparta.demo.dto.response.ApiResponseDto;
+import com.sparta.demo.dto.reuqest.BoardRequestDto;
+import com.sparta.demo.dto.response.BoardResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.BoardService;
+import com.sparta.demo.service.InvitationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 @Slf4j
 @Controller
 @RestController
@@ -26,9 +26,14 @@ public class BoardController {
         return boardService.createBoard(requestDto, userDetails.getUser());
     }
 
-    @GetMapping("/Board") // 전체 보드 조회
-    public List<BoardResponseDto> getBoards() {
-        return boardService.getBoards();
+//    @GetMapping("/Board")
+//    public List<BoardResponseDto> getBoards() {
+//        return boardService.getBoards();
+//    }
+
+    @GetMapping("/allBoards") // 초대받은 보드 + 본인이 생성한 보드 전체 조회
+    public ResponseEntity<ApiResponseDto> getAllUserBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.getAllUserBoards(userDetails.getUser());
     }
 
     @GetMapping("/Board/{id}") // 상세 보드 조회
