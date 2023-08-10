@@ -51,7 +51,7 @@ public class BoardService {
         List<Board> invitedBoards = userBoardRelationRepository.findInvitedBoardsByUser(user);
 
         // 중복방지(Set)
-        Set<Board> uniqueBoards = new HashSet<>(createdBoards);
+        Set<Board> uniqueBoards = new LinkedHashSet<>(createdBoards);
 
         // 중복 검사 후 Set에 추가 로직
         for (Board board : invitedBoards) {
@@ -59,6 +59,8 @@ public class BoardService {
                 uniqueBoards.add(board);
             }
         }
+
+        Iterator<Board> iter = uniqueBoards.iterator();
 
         // Set을 리스트로 변환하여 반환합니다.
         List<Board> allBoards = new ArrayList<>(uniqueBoards);
@@ -104,6 +106,6 @@ public class BoardService {
         board.setBoardDescription(requestDto.getBoardDescription());
         board.setBoardColor(requestDto.getBoardColor());
 
-        return ResponseEntity.status(200).body(new ApiResponseDto(HttpStatus.OK.value(),"보드 수정 성공",new BoardResponseDto(boardRepository.save(board))));
+        return ResponseEntity.status(200).body(new ApiResponseDto(HttpStatus.OK.value(), "보드 수정 성공", new BoardResponseDto(boardRepository.save(board))));
     }
 }
