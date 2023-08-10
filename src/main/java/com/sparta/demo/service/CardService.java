@@ -18,12 +18,15 @@ public class CardService {
 
     public CardService(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
+        this.sectionRepository = sectionRepository;
     }
 
     // 카드 생성
     public CardResponseDto createCard(CardRequestDto requestDto, User user) {
-        //해당되는 section entity를 가져오기(미완성)
-
+        //해당되는 section entity를 가져오기
+        Section section = sectionRepository.findById(requestDto.getSectionId()).orElseThrow(
+                () -> new IllegalArgumentException("해당되는 column을 찾을수 없습니다.")
+        );
 
         //card entity를 만들어서 저장
         Card card = new Card(requestDto, user);
