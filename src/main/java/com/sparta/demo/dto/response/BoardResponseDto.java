@@ -1,12 +1,10 @@
-package com.sparta.demo.dto;
+package com.sparta.demo.dto.response;
 
 import com.sparta.demo.entity.Board;
-import com.sparta.demo.entity.Section;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Getter

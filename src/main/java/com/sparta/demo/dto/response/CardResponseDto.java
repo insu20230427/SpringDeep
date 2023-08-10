@@ -1,4 +1,4 @@
-package com.sparta.demo.dto;
+package com.sparta.demo.dto.response;
 
 import com.sparta.demo.entity.Card;
 import lombok.Getter;
