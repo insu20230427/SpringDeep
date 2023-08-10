@@ -18,5 +18,4 @@ public class SectionResponseDto {
         this.sectionName = section.getColumnName();
         this.cards = section.getCardList().stream().map(CardResponseDto::new).toList();
     }
-
 }
