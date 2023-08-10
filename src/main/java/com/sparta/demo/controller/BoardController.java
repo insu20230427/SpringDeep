@@ -7,6 +7,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @Slf4j
-@Controller
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -22,13 +22,14 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/Board") // 보드 생성
-    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public BoardResponseDto createBoard(@ModelAttribute BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.createBoard(requestDto, userDetails.getUser());
     }
 
     @GetMapping("/Board") // 전체 보드 조회
-    public List<BoardResponseDto> getBoards() {
-        return boardService.getBoards();
+    public ResponseEntity<ApiResponseDto> getBoards() {
+        List<BoardResponseDto> boardList = boardService.getBoards();
+        return ResponseEntity.ok().body(new ApiResponseDto(HttpStatus.OK.value(),"섹션조회.", boardList));
     }
 
     @GetMapping("/Board/{id}") // 상세 보드 조회
