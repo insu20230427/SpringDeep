@@ -1,13 +1,12 @@
 package com.sparta.demo.service;
 
 import com.sparta.demo.dto.response.ApiResponseDto;
-import com.sparta.demo.dto.reuqest.BoardRequestDto;
 import com.sparta.demo.dto.response.BoardResponseDto;
+import com.sparta.demo.dto.reuqest.BoardRequestDto;
 import com.sparta.demo.entity.Board;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.repository.BoardRepository;
 import com.sparta.demo.repository.UserBoardRelationRepository;
-import jakarta.persistence.SecondaryTable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,7 +43,6 @@ public class BoardService {
 
 
     public ResponseEntity<ApiResponseDto> getAllUserBoards(User user) {
-        System.out.println("getAllUserBoards 호출");
 
         // 사용자가 생성한 보드 조회
         List<Board> createdBoards = boardRepository.findByUser(user);

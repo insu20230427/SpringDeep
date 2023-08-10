@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--부트스트랩-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--JQuery-->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    ​
     <title>Trello-like App</title>
     <style>
         body {
@@ -14,7 +21,7 @@
             background-repeat: no-repeat;
             background-color: white;
         }
-
+        ​
         .board-list {
             display: flex;
             flex-wrap: wrap;
@@ -23,7 +30,7 @@
             padding: 20px; /* Padding added for better spacing */
             min-height: 100vh;
         }
-
+        ​
         .board {
             position: relative;
             border-radius: 10px; /* Increased the border radius */
@@ -36,13 +43,13 @@
             text-align: center;
             background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
         }
-
+        ​
         .color-options {
             display: flex;
             justify-content: center;
             margin-top: 10px;
         }
-
+        ​
         .color-option {
             width: 40px; /* Bigger size */
             height: 40px; /* Bigger size */
@@ -51,15 +58,25 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-
+        ​
         .color-option:hover {
             transform: scale(1.1);
         }
-
-        .color-option.red { background-color: red; }
-        .color-option.blue { background-color: blue; }
-        .color-option.yellow { background-color: yellow; } /* Changed green to yellow */
-
+        ​
+        .color-option.red {
+            background-color: red;
+        }
+        ​
+        .color-option.blue {
+            background-color: blue;
+        }
+        ​
+        .color-option.yellow {
+            background-color: yellow;
+        }
+        ​
+            /* Changed green to yellow */
+        ​
         .add-board {
             border-radius: 50%; /* Circular shape */
             margin: 40px 20px 40px 20px;
@@ -70,12 +87,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
+        ​
         .add-board:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-
+        ​
         .folder-icon {
             width: 100px; /* Adjust the size as needed */
             height: 80px; /* Adjust the size as needed */
@@ -84,80 +101,225 @@
             background-repeat: no-repeat;
             margin: 0 auto;
         }
+        ​
         .login-signup-container {
             display: flex;
             justify-content: flex-end;
             margin-top: 5px; /* Add some top margin for spacing */
         }
+        ​
         .login-signup-buttons {
             display: flex;
             gap: 10px; /* Add some gap between buttons */
         }
+        ​
+        #modal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        ​
+        #modal .modal-window {
+            background: rgba(69, 139, 197, 0.70);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+        ​
+        #modal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+            ​
+        }
+        ​
+        #modal .title h2 {
+            display: inline;
+        }
+        ​
+        #modal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+        ​
+        #modal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+        ​
+        ​
     </style>
 </head>
+​
 <div class="login-signup-container">
     <div class="login-signup-buttons">
         <button onclick="openLoginForm()">Login</button>
         <button onclick="openSignupForm()">Sign Up</button>
     </div>
 </div>
+​
 <body>
 <div class="board-list">
     <div class="add-board" onclick="createBoard()">+</div>
-
+    ​
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <form action="/api/Board" method="post">
+                <div class="title">
+                    <h2>보드생성</h2>
+                </div>
+                <div class="close-area">X</div>
+                <div class="mb-3">
+                    <label class="form-label" for="cBoardName">BOARD NAME</label>
+                    <input class="form-control" type="text" name="boardname" id="cBoardName"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="cBoardDescription">BOARD DESCRIPTION</label>
+                    <input class="form-control" type="text" name="boardDescription" id="cBoardDescription"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="cBoardColor">COLOR</label>
+                    <select name="boardColor" class="form-select" id="cBoardColor">
+                        <option selected></option>
+                        <option value="green">green</option>
+                        <option value="blue">blue</option>
+                        <option value="yellow">yellow</option>
+                        <option value="red">red</option>
+                        <option value="grey">grey</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <button type="submit">생성</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-
-
+​
+​
 <script>
-    function openBoard(boardName) {
-        // Redirect to the card.html page for the selected board
+    //처음 페이지 실행될 때 같이 실행될 함수
+    $(document).ready(function () {
+        modalOff()
+        setBoard();
+    });
+​
+    const modal = document.getElementById("modal")
+​
+    function modalOn() {
+        modal.style.display = "flex"
+    }
+​
+    function isModalOn() {
+        return modal.style.display = "flex"
+    }
+​
+    function modalOff() {
+        modal.style.display = "none"
+    }
+​
+    const closeBtn = modal.querySelector(".close-area")
+    closeBtn.addEventListener("click", e => {
+        modalOff();
+    })
+​
+    ​
+    //사용자의 초대된 보드 리스트 가져오기 -> 수정해야됨
+    function setBoard() {
+        $.ajax({
+            type: 'GET',
+            url: '/api/Board',
+            success: function (res) {
+                let data = res['data'];
+                console.log(data);
+                let card_Html = ``;
+                for (let i = 0; i < data.length; i++) {
+                    const newBoard = document.createElement("div");
+                    newBoard.className = "board";
+                    newBoard.style.backgroundColor = data[i]['boardColor'];
+                    newBoard.innerHTML = `<div class="folder-icon" onclick="openBoard(${data[i]['id']})"></div><br>` + data[i]['boardname'];
+​
+                    // newBoard.addEventListener("click", function() {
+                    //     openBoard(boardName);
+                    // });
+                ​
+                    document.querySelector(".board-list").appendChild(newBoard);
+                    // createNewBoard(data[i]['id'], data[i]['boardname'], data[i]['boardColor'])
+                }
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+    }
+​
+    //보드 클릭시 카드 페이지로 연결
+    function openBoard(boardId) {
+        localStorage.setItem("boardId", boardId);
         window.location.href = "/card-page";
     }
-
+​
     function createBoard() {
+        isModalOn();
+​
         const newBoardName = prompt("Enter the name of the new board:");
         if (newBoardName) {
             const colorContainer = document.createElement("div");
             colorContainer.className = "color-options";
-
+​
             const colorOptions = ['red', 'blue', 'yellow']; /* Changed green to yellow */
             colorOptions.forEach(color => {
                 const colorOption = document.createElement("div");
                 colorOption.className = "color-option " + color;
-                colorOption.addEventListener("click", function() {
+                colorOption.addEventListener("click", function () {
                     createNewBoard(newBoardName, color);
                     colorContainer.remove();
                 });
                 colorContainer.appendChild(colorOption);
             });
-
+​
             document.querySelector(".board-list").appendChild(colorContainer);
         }
     }
-
-    function createNewBoard(boardName, color = "#f39c12") {
-        const newBoard = document.createElement("div");
-        newBoard.className = "board";
-        newBoard.style.backgroundColor = color;
-        newBoard.innerHTML = '<div class="folder-icon"></div><br>' + boardName;
-
-        newBoard.addEventListener("click", function() {
-            openBoard(boardName);
-        });
-
-        document.querySelector(".board-list").appendChild(newBoard);
+​
+    function createNewBoard(boardName, boardDescription, boardColor) {
+        console.log(boardName, boardDescription, boardColor)
     }
+​
     function openLoginForm() {
         window.location.href = "/login-page";
     }
-
+​
     function openSignupForm() {
         window.location.href = "/signup-page";
     }
-
-    // Initial creation of the boards
-    createNewBoard("Board 1", "red");
-    createNewBoard("Board 2", "blue");
+​
+    ​
 </script>
 </body>
 </html>
