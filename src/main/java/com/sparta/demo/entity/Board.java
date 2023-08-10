@@ -33,9 +33,6 @@ public class Board {
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board")
-    private List<UserBoardRelation> userBoardrelation = new ArrayList<>();
-
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     List<Section> sectionList = new ArrayList<>();
 
