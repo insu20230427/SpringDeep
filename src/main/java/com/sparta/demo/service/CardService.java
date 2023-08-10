@@ -3,8 +3,10 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.CardRequestDto;
 import com.sparta.demo.dto.CardResponseDto;
 import com.sparta.demo.entity.Card;
+import com.sparta.demo.entity.Section;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.repository.CardRepository;
+import com.sparta.demo.repository.SectionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +17,9 @@ import java.util.List;
 public class CardService {
 
     private final CardRepository cardRepository;
+    private final SectionRepository sectionRepository;
 
-    public CardService(CardRepository cardRepository) {
+    public CardService(CardRepository cardRepository, SectionRepository sectionRepository) {
         this.cardRepository = cardRepository;
         this.sectionRepository = sectionRepository;
     }
@@ -29,7 +32,7 @@ public class CardService {
         );
 
         //card entity를 만들어서 저장
-        Card card = new Card(requestDto, user);
+        Card card = new Card(requestDto, user, section);
         cardRepository.save(card);
 
         //dto로 만들어서 반환해줌
