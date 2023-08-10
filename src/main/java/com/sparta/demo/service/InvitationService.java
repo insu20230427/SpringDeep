@@ -10,7 +10,6 @@ import com.sparta.demo.repository.BoardRepository;
 import com.sparta.demo.repository.UserBoardRelationRepository;
 import com.sparta.demo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

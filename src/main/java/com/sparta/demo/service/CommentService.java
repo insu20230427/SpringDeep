@@ -1,7 +1,7 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.reuqest.CommentRequestDto;
 import com.sparta.demo.dto.response.CommentResponseDto;
+import com.sparta.demo.dto.reuqest.CommentRequestDto;
 import com.sparta.demo.entity.Card;
 import com.sparta.demo.entity.Comment;
 import com.sparta.demo.entity.User;
