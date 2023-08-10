@@ -1,5 +1,6 @@
 package com.sparta.demo.controller;
 
+import com.sparta.demo.dto.ApiResponseDto;
 import com.sparta.demo.dto.BoardResponseDto;
 import com.sparta.demo.entity.Board;
 import com.sparta.demo.service.InvitationService;
@@ -19,20 +20,14 @@ public class InvitationController {
 
 
     @PostMapping("/invite")
-    public ResponseEntity<String> inviteUserToBoard(@RequestParam Long userId, @RequestParam Long boardId) {
-        try {
-            invitationService.inviteUserToBoard(userId, boardId);
-            return ResponseEntity.ok("성공적으로 초대가 되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ApiResponseDto> inviteUserToBoard(@RequestParam Long userId, @RequestParam Long boardId) {
+        return invitationService.inviteUserToBoard(userId, boardId);
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<BoardResponseDto> acceptInvitation(@RequestParam Long relationId) {
-        Board board = invitationService.acceptInvitation(relationId);
-        BoardResponseDto responseDto = new BoardResponseDto(board); // BoardResponseDto는 보드 정보를 담는 DTO
-        return ResponseEntity.ok(responseDto);
+    public ResponseEntity<ApiResponseDto> acceptInvitation(@RequestParam Long relationId) {
+        return invitationService.acceptInvitation(relationId);
     }
+
 }
 
