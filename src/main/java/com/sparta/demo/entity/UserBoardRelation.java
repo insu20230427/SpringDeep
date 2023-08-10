@@ -11,14 +11,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "boardUser")
 @EntityListeners(AuditingEntityListener.class)
 public class UserBoardRelation {
-
     private String invitationStatus;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne //
+    @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 

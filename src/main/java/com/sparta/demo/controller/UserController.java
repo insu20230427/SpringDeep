@@ -1,9 +1,8 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.ApiResponseDto;
-import com.sparta.demo.dto.LoginRequestDto;
-import com.sparta.demo.dto.SignupRequestDto;
-import com.sparta.demo.jwt.JwtUtil;
+import com.sparta.demo.dto.response.ApiResponseDto;
+import com.sparta.demo.dto.reuqest.LoginRequestDto;
+import com.sparta.demo.dto.reuqest.SignupRequestDto;
 import com.sparta.demo.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.SectionRequestDto;
-import com.sparta.demo.dto.SectionResponseDto;
+import com.sparta.demo.dto.reuqest.SectionRequestDto;
+import com.sparta.demo.dto.response.SectionResponseDto;
 import com.sparta.demo.entity.Board;
 import com.sparta.demo.entity.Section;
 import com.sparta.demo.repository.BoardRepository;

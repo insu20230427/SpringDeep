@@ -1,12 +1,11 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.CardRequestDto;
-import com.sparta.demo.dto.CardResponseDto;
+import com.sparta.demo.dto.reuqest.CardRequestDto;
+import com.sparta.demo.dto.response.CardResponseDto;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.CardService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
