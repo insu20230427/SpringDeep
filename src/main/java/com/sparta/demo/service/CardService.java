@@ -1,10 +1,12 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.CardRequestDto;
-import com.sparta.demo.dto.CardResponseDto;
+import com.sparta.demo.dto.response.CardResponseDto;
+import com.sparta.demo.dto.reuqest.CardRequestDto;
 import com.sparta.demo.entity.Card;
+import com.sparta.demo.entity.Section;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.repository.CardRepository;
+import com.sparta.demo.repository.SectionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +17,22 @@ import java.util.List;
 public class CardService {
 
     private final CardRepository cardRepository;
+    private final SectionRepository sectionRepository;
 
-    public CardService(CardRepository cardRepository) {
+    public CardService(CardRepository cardRepository, SectionRepository sectionRepository) {
         this.cardRepository = cardRepository;
+        this.sectionRepository = sectionRepository;
     }
 
     // 카드 생성
     public CardResponseDto createCard(CardRequestDto requestDto, User user) {
-        //해당되는 section entity를 가져오기(미완성)
-
+        //해당되는 section entity를 가져오기
+        Section section = sectionRepository.findById(requestDto.getSectionId()).orElseThrow(
+                () -> new IllegalArgumentException("해당되는 column을 찾을수 없습니다.")
+        );
 
         //card entity를 만들어서 저장
-        Card card = new Card(requestDto, user);
+        Card card = new Card(requestDto, user, section);
         cardRepository.save(card);
 
         //dto로 만들어서 반환해줌

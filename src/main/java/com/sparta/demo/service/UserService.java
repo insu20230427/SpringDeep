@@ -1,7 +1,7 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.LoginRequestDto;
-import com.sparta.demo.dto.SignupRequestDto;
+import com.sparta.demo.dto.reuqest.LoginRequestDto;
+import com.sparta.demo.dto.reuqest.SignupRequestDto;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.jwt.JwtUtil;
 import com.sparta.demo.repository.UserRepository;

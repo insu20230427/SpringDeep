@@ -1,0 +1,15 @@
+package com.sparta.demo.dto.response;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class InvitationResponseDto {
+    private Long id;
+    private String status;
+}
+
+

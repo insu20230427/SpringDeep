@@ -5,27 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trello-like App</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .board-list {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-form {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 300px;
+    }
+
+    .login-form h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .login-form form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .login-form input {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .login-form button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .login-form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
 <div class="board-list">
   <div class="login-form">
-    <h2>Login</h2>
-    <form id="login-form">
-      <input type="text" id="login-username" placeholder="Username" required><br>
-      <input type="password" id="login-password" placeholder="Password" required><br>
-      <button type="submit">Login</button>
+    <h2>로그인</h2>
+    <form action="/auth/login" method="post">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">로그인</button>
     </form>
   </div>
 </div>
-<script>
-  document.getElementById("login-form").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const loginUsername = document.getElementById("login-username").value;
-    const loginPassword = document.getElementById("login-password").value;
-    // Add your login logic here...
-    // For now, display an alert for successful login
-    alert("Logged in as: " + loginUsername);
-  });
-</script>
 </body>
 </html>
