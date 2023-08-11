@@ -9,7 +9,7 @@
     <!--JQuery-->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    ​
+
     <title>Trello-like App</title>
     <style>
         body {
@@ -21,7 +21,7 @@
             background-repeat: no-repeat;
             background-color: white;
         }
-        ​
+
         .board-list {
             display: flex;
             flex-wrap: wrap;
@@ -30,7 +30,7 @@
             padding: 20px; /* Padding added for better spacing */
             min-height: 100vh;
         }
-        ​
+
         .board {
             position: relative;
             border-radius: 10px; /* Increased the border radius */
@@ -43,13 +43,13 @@
             text-align: center;
             background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
         }
-        ​
+
         .color-options {
             display: flex;
             justify-content: center;
             margin-top: 10px;
         }
-        ​
+
         .color-option {
             width: 40px; /* Bigger size */
             height: 40px; /* Bigger size */
@@ -58,25 +58,25 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        ​
+
         .color-option:hover {
             transform: scale(1.1);
         }
-        ​
+
         .color-option.red {
             background-color: red;
         }
-        ​
+
         .color-option.blue {
             background-color: blue;
         }
-        ​
+
         .color-option.yellow {
             background-color: yellow;
         }
-        ​
+
             /* Changed green to yellow */
-        ​
+
         .add-board {
             border-radius: 50%; /* Circular shape */
             margin: 40px 20px 40px 20px;
@@ -87,12 +87,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        ​
+
         .add-board:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        ​
+
         .folder-icon {
             width: 100px; /* Adjust the size as needed */
             height: 80px; /* Adjust the size as needed */
@@ -101,18 +101,18 @@
             background-repeat: no-repeat;
             margin: 0 auto;
         }
-        ​
+
         .login-signup-container {
             display: flex;
             justify-content: flex-end;
             margin-top: 5px; /* Add some top margin for spacing */
         }
-        ​
+
         .login-signup-buttons {
             display: flex;
             gap: 10px; /* Add some gap between buttons */
         }
-        ​
+
         #modal.modal-overlay {
             width: 100%;
             height: 100%;
@@ -129,8 +129,9 @@
             -webkit-backdrop-filter: blur(1.5px);
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 2;
         }
-        ​
+
         #modal .modal-window {
             background: rgba(69, 139, 197, 0.70);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -144,19 +145,18 @@
             top: -100px;
             padding: 10px;
         }
-        ​
+
         #modal .title {
             padding-left: 10px;
             display: inline;
             text-shadow: 1px 1px 2px gray;
             color: white;
-            ​
         }
-        ​
+
         #modal .title h2 {
             display: inline;
         }
-        ​
+
         #modal .close-area {
             display: inline;
             float: right;
@@ -165,29 +165,155 @@
             text-shadow: 1px 1px 2px gray;
             color: white;
         }
-        ​
+
         #modal .content {
             margin-top: 20px;
             padding: 0px 10px;
             text-shadow: 1px 1px 2px gray;
             color: white;
         }
-        ​
-        ​
+    </style>
+
+    <style>
+        #updatemodal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 2;
+        }
+
+        #updatemodal .modal-window {
+            background: rgba(69, 139, 197, 0.70);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+
+        #updatemodal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #updatemodal .title h2 {
+            display: inline;
+        }
+
+        #updatemodal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #updatemodal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+    </style>
+
+    <style>
+        #confirmmodal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 2;
+        }
+
+        #confirmmodal .modal-window {
+            background: rgba(69, 139, 197, 0.70);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+
+        #confirmmodal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #confirmmodal .title h2 {
+            display: inline;
+        }
+
+        #confirmmodal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #confirmmodal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
     </style>
 </head>
-​
+
 <div class="login-signup-container">
     <div class="login-signup-buttons">
-        <button onclick="openLoginForm()">Login</button>
-        <button onclick="openSignupForm()">Sign Up</button>
+        <button onclick="openLoginForm()">로그인</button>
+        <button onclick="openSignupForm()">회원가입</button><br>
+
+        <button onclick="confirmModalOn()">요청확인</button>
+
+
     </div>
 </div>
-​
+
 <body>
 <div class="board-list">
     <div class="add-board" onclick="createBoard()">+</div>
-    ​
+
     <div id="modal" class="modal-overlay">
         <div class="modal-window">
             <form action="/api/Board" method="post">
@@ -220,55 +346,182 @@
             </form>
         </div>
     </div>
+
+    <div id="updatemodal" class="modal-overlay">
+        <div class="modal-window">
+            <form>
+                <div class="title">
+                    <h2>보드수정</h2>
+                </div>
+                <div class="close-area2">X</div>
+                <div class="mb-3">
+                    <label class="form-label" for="cBoardName">BOARD NAME</label>
+                    <input class="form-control" type="text" id="boardname" name="boardname"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="BoardDescription">BOARD DESCRIPTION</label>
+                    <input class="form-control" type="text" id="boardDescription" name="boardDescription"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="BoardColor">COLOR</label>
+                    <select name="boardColor" class="form-select" id="boardColor">
+                        <option selected></option>
+                        <option value="green">green</option>
+                        <option value="blue">blue</option>
+                        <option value="yellow">yellow</option>
+                        <option value="red">red</option>
+                        <option value="grey">grey</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <button type="button" onclick="updateBoard()">수정</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmmodal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="close-area3">X</div>
+        </div>
+    </div>
+
 </div>
-​
-​
+
 <script>
     //처음 페이지 실행될 때 같이 실행될 함수
     $(document).ready(function () {
         modalOff()
+        updateModalOff()
+        confirmModalOff()
         setBoard();
     });
-​
+
     const modal = document.getElementById("modal")
-​
-    function modalOn() {
-        modal.style.display = "flex"
-    }
-​
+    const updateModal = document.getElementById("updatemodal")
+    const confirmModal = document.getElementById("confirmmodal")
+
+    let boardIdTemp;
+
+    // function modalOn() {
+    //     modal.style.display = "flex"
+    // }
+
     function isModalOn() {
         return modal.style.display = "flex"
     }
-​
+
     function modalOff() {
         modal.style.display = "none"
     }
-​
+
     const closeBtn = modal.querySelector(".close-area")
     closeBtn.addEventListener("click", e => {
         modalOff();
     })
-​
-    ​
+
+    // 보드 수정 모달
+    function isUpdateModalOn(boardId) {
+        boardIdTemp = boardId;
+        return updateModal.style.display = "flex"
+    }
+
+    function updateModalOff() {
+        updateModal.style.display = "none"
+    }
+
+    const closeBtn2 = updateModal.querySelector(".close-area2")
+    closeBtn2.addEventListener("click", e => {
+        updateModalOff();
+    })
+
+    // 요청수락 리스트 모달
+    function confirmModalOn() {
+        return confirmModal.style.display = "flex"
+    }
+
+    function confirmModalOff() {
+        confirmModal.style.display = "none"
+    }
+
+    const closeBtn3 = confirmModal.querySelector(".close-area3")
+    closeBtn3.addEventListener("click", e => {
+        confirmModalOff();
+    })
+
+    function updateBoard() {
+        let boardname = $('#boardname').val();
+        let boardDescription =$('#boardDescription').val();
+        let boardColor = $('#boardColor').val();
+
+        let data = {
+            "boardname" : boardname,
+            "boardDescription" : boardDescription,
+            "boardColor" : boardColor
+        }
+
+        $.ajax({
+            type:'PUT',
+            url:'/api/Board/' + boardIdTemp,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(response) {
+                alert("성공");
+                window.location.reload();
+            }, error: function(xhr, textStatus, errorThrown) {
+                const errorDiv = document.getElementById('update-failed');
+                errorDiv.style.display = 'block';
+
+                let message = xhr['responseJSON']['data'];
+                errorDiv.innerHTML += `<br>`;
+                Object.keys(message).forEach(function(key) {
+                    errorDiv.innerHTML += message[key] + `<br>`;
+                });
+            }
+        })
+
+    }
+
+    function deleteBoard(boardId){
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            $.ajax({
+                url: '/api/Board/' + boardId, // 요청을 보낼 서버의 URL
+                method: 'DELETE', // 요청 메소드 (GET, POST 등)
+                success: function (response) {
+                    alert("삭제 완료")
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("삭제 실패")
+                    console.log(xhr);
+                }
+            });
+        }
+    }
+
     //사용자의 초대된 보드 리스트 가져오기 -> 수정해야됨
     function setBoard() {
         $.ajax({
             type: 'GET',
-            url: '/api/Board',
+            url: '/api/allBoards',
             success: function (res) {
                 let data = res['data'];
                 console.log(data);
                 let card_Html = ``;
                 for (let i = 0; i < data.length; i++) {
                     const newBoard = document.createElement("div");
-                    newBoard.className = "board";
+                    newBoard.className = "board hover-div";
                     newBoard.style.backgroundColor = data[i]['boardColor'];
-                    newBoard.innerHTML = `<div class="folder-icon" onclick="openBoard(${data[i]['id']})"></div><br>` + data[i]['boardname'];
-​
+                    newBoard.innerHTML = `<div class="folder-icon" onclick="openBoard(${data[i]['id']} )"></div><br>${data[i]['boardname']}
+                                            <div class="description">${data[i]['boardDescription']}<br>
+                                                    <button onclick="isUpdateModalOn(${data[i]['id']})">수정</button>
+                                                    <button onclick="deleteBoard(${data[i]['id']})">삭제</button>
+                                            </div> `
+
                     // newBoard.addEventListener("click", function() {
                     //     openBoard(boardName);
                     // });
-                ​
+
                     document.querySelector(".board-list").appendChild(newBoard);
                     // createNewBoard(data[i]['id'], data[i]['boardname'], data[i]['boardColor'])
                 }
@@ -277,49 +530,25 @@
             }
         });
     }
-​
+
     //보드 클릭시 카드 페이지로 연결
     function openBoard(boardId) {
         localStorage.setItem("boardId", boardId);
         window.location.href = "/card-page";
     }
-​
+
     function createBoard() {
         isModalOn();
-​
-        const newBoardName = prompt("Enter the name of the new board:");
-        if (newBoardName) {
-            const colorContainer = document.createElement("div");
-            colorContainer.className = "color-options";
-​
-            const colorOptions = ['red', 'blue', 'yellow']; /* Changed green to yellow */
-            colorOptions.forEach(color => {
-                const colorOption = document.createElement("div");
-                colorOption.className = "color-option " + color;
-                colorOption.addEventListener("click", function () {
-                    createNewBoard(newBoardName, color);
-                    colorContainer.remove();
-                });
-                colorContainer.appendChild(colorOption);
-            });
-​
-            document.querySelector(".board-list").appendChild(colorContainer);
-        }
     }
-​
-    function createNewBoard(boardName, boardDescription, boardColor) {
-        console.log(boardName, boardDescription, boardColor)
-    }
-​
+
     function openLoginForm() {
         window.location.href = "/login-page";
     }
-​
+
     function openSignupForm() {
         window.location.href = "/signup-page";
     }
-​
-    ​
+
 </script>
 </body>
 </html>

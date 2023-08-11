@@ -14,13 +14,13 @@ public class BoardResponseDto {
     private String boardname;
     private String boardDescription;
     private String boardColor;
-    private List<SectionResponseDto> sectionResponseDtoList;
+//    private List<SectionResponseDto> sectionResponseDtoList;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.boardname = board.getBoardname();
         this.boardDescription = board.getBoardDescription();
         this.boardColor = board.getBoardColor();
-        this.sectionResponseDtoList = board.getSectionList().stream().map(SectionResponseDto::new).collect(Collectors.toList());
+//        this.sectionResponseDtoList = board.getSectionList().stream().map(SectionResponseDto::new).collect(Collectors.toList());
     }
 }
