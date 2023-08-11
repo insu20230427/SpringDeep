@@ -426,6 +426,8 @@
     <div id="confirmmodal" class="modal-overlay">
         <div class="modal-window">
             <div class="close-area3">X</div>
+            <div class = "invited-list">
+            </div>
         </div>
     </div>
 
@@ -563,9 +565,6 @@
                                                     <button onclick="deleteBoard(${data[i]['id']})">삭제</button>
                                             </div> `
 
-                    // newBoard.addEventListener("click", function() {
-                    //     openBoard(boardName);
-                    // });
 
                     document.querySelector(".board-list").appendChild(newBoard);
                     // createNewBoard(data[i]['id'], data[i]['boardname'], data[i]['boardColor'])

@@ -22,7 +22,7 @@ public class BoardController {
     @PostMapping("/Board") // 보드 생성
     public String createBoard(@ModelAttribute BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         boardService.createBoard(requestDto, userDetails.getUser());
-        return "index";
+        return "redirect:/";
     }
 
 //    @GetMapping("/Board")
@@ -45,7 +45,7 @@ public class BoardController {
     @PutMapping("/Board/{id}") // 보드 수정
     public String updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
          boardService.updateBoard(id, requestDto, userDetails.getUser());
-         return "index";
+         return "redirect:/";
     }
 
     @DeleteMapping("/Board/{id}") // 상세 보드 삭제
