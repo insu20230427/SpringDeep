@@ -10,6 +10,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class InvitationResponseDto {
     private Long id;
+    private String boardName;
     private String status;
 
     public InvitationResponseDto(UserBoardRelation userBoardRelation) {
