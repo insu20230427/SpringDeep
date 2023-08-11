@@ -32,6 +32,11 @@ public class CardController {
         return cardService.getCards();
     }
 
+    @GetMapping("/card/{id}")
+    public CardResponseDto getOneCard(@PathVariable Long id) {
+        return cardService.getOneCard(id);
+    }
+
     // card 수정
     @PutMapping("/card/{id}")
     public CardResponseDto updateCard(@PathVariable Long id, @RequestBody CardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {

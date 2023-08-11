@@ -50,6 +50,7 @@ public class BoardService {
         // 사용자가 초대받은 보드 조회
         List<Board> invitedBoards = userBoardRelationRepository.findInvitedBoardsByUser(user);
 
+
         // 중복방지(Set)
         Set<Board> uniqueBoards = new LinkedHashSet<>(createdBoards);
 
@@ -85,7 +86,7 @@ public class BoardService {
         Optional<Board> board = boardRepository.findById(id);
 
         if (!board.isPresent() || !Objects.equals(board.get().getUser().getUsername(), user.getUsername())) {
-            log.error("보드가 존재하지 않습니다.");
+            log.error("삭제 권한이 없습니다.");
             return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "보드 수정 실패"));
         }
 
