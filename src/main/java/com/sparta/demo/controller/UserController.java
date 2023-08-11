@@ -23,7 +23,7 @@ public class UserController {
         @PostMapping("/signup")
         public String signup(@ModelAttribute SignupRequestDto requestDto){
             userService.signup(requestDto);
-            return "index";
+            return "redirect:/";
         }
 
 
@@ -32,7 +32,7 @@ public class UserController {
         @PostMapping("/login")
         public String login(@ModelAttribute LoginRequestDto requestDto, HttpServletResponse response){
             userService.login(requestDto,response);
-            return "index";
+            return "redirect:/";
         }
     }
 

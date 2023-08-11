@@ -51,7 +51,7 @@ public class BoardController {
     @DeleteMapping("/Board/{id}") // 상세 보드 삭제
     public String deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
          boardService.deleteBoard(id, userDetails.getUser());
-         return "index";
+         return "redirect:/";
     }
 }
 

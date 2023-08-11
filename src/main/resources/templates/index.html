@@ -297,6 +297,49 @@
             color: white;
         }
     </style>
+
+    <script>
+        function invitedDisplay(){
+            $.ajax({
+                type: 'GET',
+                url: '/invitation/invite-list',
+                success: function (res) {
+                    let data = res['data'];
+                    console.log("invitedDisplay")
+                    console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        const newBoard = document.createElement("div");
+                        newBoard.className = "invited";
+                        newBoard.innerHTML = `<div> ${data[i]['boardName']} : ${data[i]['status']}
+                                                   <button onclick="invitedAccept(${data[i]['id']})">수락</button>
+                                              <div>`
+
+                        document.querySelector(".invited-list").appendChild(newBoard);
+                        // createNewBoard(data[i]['id'], data[i]['boardname'], data[i]['boardColor'])
+                    }
+                }, error: function (res) {
+                    window.location.href = host + '';
+                }
+            });
+        }
+
+        function invitedAccept(id) {
+                $.ajax({
+                    method: 'POST',
+                    url: '/invitation/accept?relationId=' + id,
+                    contentType: 'application/json',
+                    success: function () {
+                        alert("변경 완료");
+                        window.location.reload();
+                    },
+                    error: function () {
+                        alert("변경 실패.");
+                    }
+                });
+        }
+
+
+    </script>
 </head>
 
 <div class="login-signup-container">
@@ -394,7 +437,8 @@
         modalOff()
         updateModalOff()
         confirmModalOff()
-        setBoard();
+        setBoard()
+        invitedDisplay()
     });
 
     const modal = document.getElementById("modal")
@@ -506,6 +550,7 @@
             url: '/api/allBoards',
             success: function (res) {
                 let data = res['data'];
+                console.log("setBoard")
                 console.log(data);
                 let card_Html = ``;
                 for (let i = 0; i < data.length; i++) {
