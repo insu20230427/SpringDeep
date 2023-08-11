@@ -10,7 +10,10 @@
     <title>My Trello-like App</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: lightgoldenrodyellow;
+            margin: 0;
+            padding: 0;
         }
 
         .board {
@@ -39,20 +42,45 @@
 
         .add-list-button,
         .add-card-button {
-            background-color: #ccc;
+            background-color: cornflowerblue;
             border: none;
             border-radius: 5px;
             color: #fff;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 8px 15px;
             margin-right: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .delete-card-button,
+        .edit-card-button {
+            background-color: lightblue;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            padding: 3px 8px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .edit-list-button,
+        .delete-list-button {
+            background-color: lightblue;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            padding: 3px 8px;
+            margin-right: 5px;
+            transition: background-color 0.3s ease-in-out;
         }
 
         .input-field {
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 5px;
-            width: 100%;
+            width: 85%;
             display: block;
             margin-bottom: 5px;
         }
@@ -93,9 +121,105 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+
+        .logo-container {
+            background-color: lightgoldenrodyellow;
+            padding: 10px;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-image {
+            max-width: 120px; /* Adjust the value as needed */
+        }
+
+        .list-title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-button-container {
+            display: flex;
+            gap: 5px;
+        }
+
+        .card-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .card-popup-content {
+            background-color: lightgoldenrodyellow;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-popup-button {
+            background-color: #ccc;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 15px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .card-section {
+            margin-bottom: 20px;
+        }
+
+        .card-section h3 {
+            border-bottom: 1px solid #ccc; /* Adjust color as needed */
+            padding-bottom: 10px; /* Adjust spacing as needed */
+            margin-bottom: 15px; /* Adjust spacing as needed */
+        }
+
+        .card-section h4 {
+            margin-bottom: 10px;
+        }
+
+        .card-section.comments {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .card-section.comments .comment {
+            margin-bottom: 10px;
+        }
+
+        .card-section.comments .comment span {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .card-section.comments .comment button {
+            font-size: 7px;
+            margin-left: 8px;
+        }
+
+
     </style>
 </head>
 <body>
+
+<div class="logo-container">
+    <img src="https://i.postimg.cc/xT7WFpCC/LOGO.png" alt="Logo" class="logo-image">
+</div>
+
+
 <div class="board">
     <!-- Lists and cards -->
     <div class="add-list-button" onclick="createListInput()">+</div>
@@ -116,100 +240,133 @@
         document.querySelector(".board").insertBefore(inputContainer, document.querySelector(".add-list-button"));
     }
 
+
+    let listCounter = 0;
+
     function createListFromInput(buttonElement) {
         const inputField = buttonElement.previousElementSibling;
         const listName = inputField.value;
         if (listName.trim() !== "") {
             const newList = document.createElement("div");
             newList.className = "list";
-            newList.innerHTML = `<h3>${listName}</h3><button class="add-card-button" onclick="createCardFromInput(this)">Add Card</button>`;
+            newList.id = `list-${listCounter++}`; // Assign a unique ID
+            newList.innerHTML = `
+    <div class="list-title-container">
+        <h3>${listName}</h3>
+        <div class="list-button-container">
+            <button class="edit-list-button" onclick="editListName(this.parentElement.previousElementSibling)">Edit</button>
+            <button class="delete-list-button" onclick="deleteList('${newList.id}')">Delete</button>
+        </div>
+    </div>
+    <button class="add-card-button" onclick="createCardFromInput(this)">Add Card</button>`;
+
             document.querySelector(".board").insertBefore(newList, buttonElement.parentElement);
         }
         buttonElement.parentElement.remove();
     }
 
+
+    const isCreatingCardMap = {};
+
     function createCardFromInput(buttonElement) {
-        const cardContainer = document.createElement("div");
-        cardContainer.className = "card-container";
+        const listElement = buttonElement.parentElement;
 
-        const inputField = document.createElement("input");
-        inputField.type = "text";
-        inputField.className = "input-field";
-        inputField.placeholder = "Enter card title";
+        if (!isCreatingCardMap[listElement.id]) {
+            isCreatingCardMap[listElement.id] = true;
 
-        const contentField = document.createElement("textarea");
-        contentField.className = "input-field";
-        contentField.placeholder = "Enter card contents";
+            buttonElement.style.display = "none";
 
-        const colorIconsContainer = document.createElement("div");
-        colorIconsContainer.className = "input-field";
-        colorIconsContainer.innerHTML = `
-        <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
-        <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
-        <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
-    `;
+            const cardContainer = document.createElement("div");
+            cardContainer.className = "card-container";
 
-        const addCardButton = document.createElement("button");
-        addCardButton.className = "add-card-button";
-        addCardButton.innerText = "Add Card";
+            const inputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.className = "input-field";
+            inputField.placeholder = "Enter card title";
 
-        addCardButton.onclick = function () {
-            const cardTitle = inputField.value;
-            const cardContent = contentField.value;
-            const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
+            const contentField = document.createElement("textarea");
+            contentField.className = "input-field";
+            contentField.placeholder = "Enter card contents";
 
-            if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
-                const newCard = document.createElement("div");
-                newCard.className = "card";
-                newCard.style.backgroundColor = selectedColor;
+            const colorIconsContainer = document.createElement("div");
+            colorIconsContainer.className = "input-field";
+            colorIconsContainer.innerHTML = `
+            <span class="color-icon" style="background-color: lightseagreen;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: lightcoral;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
+        `;
 
-                const cardTitleElement = document.createElement("h4");
-                cardTitleElement.textContent = cardTitle;
+            const deleteCardButton = document.createElement("button");
+            deleteCardButton.className = "delete-card-button";
+            deleteCardButton.innerText = "Delete";
+            deleteCardButton.onclick = function () {
+                if (confirm('카드를 삭제 하시겠습니까?')) {
+                    cardContainer.remove();
+                }
+            };
 
-                const cardContentElement = document.createElement("p");
-                cardContentElement.textContent = cardContent;
+            const addCardButton = document.createElement("button");
+            addCardButton.className = "add-card-button";
+            addCardButton.innerText = "Add Card";
 
-                const editButton = document.createElement("button");
-                editButton.className = "edit-card-button";
-                editButton.innerText = "Edit";
-                editButton.onclick = function () {
-                    if (editButton.innerText === "Edit") {
-                        editCard(newCard, editButton);
-                    } else {
-                        saveEditedCard(newCard, editButton);
-                    }
-                };
+            addCardButton.onclick = function () {
+                const cardTitle = inputField.value;
+                const cardContent = contentField.value;
+                const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
 
-                newCard.appendChild(cardTitleElement);
-                newCard.appendChild(cardContentElement);
-                newCard.appendChild(editButton);
+                if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
+                    const newCard = document.createElement("div");
+                    newCard.className = "card";
+                    newCard.style.backgroundColor = selectedColor;
 
-                cardContainer.appendChild(newCard);
+                    const cardTitleElement = document.createElement("h4");
+                    cardTitleElement.textContent = cardTitle;
 
-                inputField.value = "";
-                contentField.value = "";
-                cardContainer.removeChild(inputField);
-                cardContainer.removeChild(contentField);
-                cardContainer.removeChild(colorIconsContainer);
-                cardContainer.removeChild(addCardButton);
-                selectedColorIcon.classList.remove("selected");
-                selectedColorIcon = null;
-            }
-        };
+                    const cardContentElement = document.createElement("p");
+                    cardContentElement.textContent = cardContent;
 
-        cardContainer.appendChild(inputField);
-        cardContainer.appendChild(contentField);
-        cardContainer.appendChild(colorIconsContainer);
-        cardContainer.appendChild(addCardButton);
+                    const editButton = document.createElement("button");
+                    editButton.className = "edit-card-button";
+                    editButton.innerText = "Edit";
+                    editButton.onclick = function () {
+                        if (editButton.innerText === "Edit") {
+                            editCard(newCard, editButton);
+                        } else {
+                            saveEditedCard(newCard, editButton);
+                        }
+                    };
 
-        buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
+                    newCard.appendChild(cardTitleElement);
+                    newCard.appendChild(cardContentElement);
+                    newCard.appendChild(editButton);
+                    newCard.appendChild(deleteCardButton);
 
-        // Hide the second "Add Card" button
-        buttonElement.style.display = "none";
+                    newCard.onclick = function () {
+                        openCard(newCard);
+                    }; // Open the pop-up on click
+
+                    cardContainer.appendChild(newCard);
+
+                    cardContainer.removeChild(inputField);
+                    cardContainer.removeChild(contentField);
+                    cardContainer.removeChild(colorIconsContainer);
+                    cardContainer.removeChild(addCardButton);
+                    selectedColorIcon.classList.remove("selected");
+                    selectedColorIcon = null;
+                }
+
+                isCreatingCardMap[listElement.id] = false;
+                buttonElement.style.display = "block";
+            };
+
+            cardContainer.appendChild(inputField);
+            cardContainer.appendChild(contentField);
+            cardContainer.appendChild(colorIconsContainer);
+            cardContainer.appendChild(addCardButton);
+
+            buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
+        }
     }
-
-
-
 
 
     let selectedColorIcon = null;
@@ -222,16 +379,18 @@
         colorIcon.classList.add("selected");
     }
 
-    function editListName(listElement) {
-        const listNameElement = listElement.querySelector('h3');
-        const currentListName = listNameElement.textContent;
+    function editListName(editButton) {
+        const listTitleContainer = editButton.parentElement.parentElement;
+        const listNameElement = listTitleContainer.querySelector('h3');
 
-        const newName = prompt('Edit list name:', currentListName);
+        const currentListName = listNameElement.textContent;
+        const newName = prompt('Section 이름을 변경하시겠습니까?:', currentListName);
 
         if (newName && newName.trim() !== "") {
             listNameElement.textContent = newName;
         }
     }
+
 
     function editCard(cardElement) {
         const cardTitleElement = cardElement.querySelector('h4');
@@ -245,8 +404,8 @@
         <input type="text" class="input-field card-title-input" value="${currentCardTitle}">
         <textarea class="input-field card-content-input">${currentCardContent}</textarea>
         <div class="input-field">
-            <span class="color-icon" style="background-color: blue;" onclick="selectColor(this)"></span>
-            <span class="color-icon" style="background-color: red;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: lightseagreen;" onclick="selectColor(this)"></span>
+            <span class="color-icon" style="background-color: lightcoral;" onclick="selectColor(this)"></span>
             <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
         </div>
         <button class="add-card-button" onclick="saveEditedCard(this.parentElement, true)">Save</button>
@@ -265,7 +424,6 @@
             });
         }
     }
-
 
 
     function saveEditedCard(cardElement, isEditing) {
@@ -299,22 +457,239 @@
     }
 
 
-
-    function deleteList(listElement) {
-        if (confirm('Are you sure you want to delete this list?')) {
+    function deleteList(listId) {
+        if (confirm('모두 삭제 하시겠습니까?')) {
+            const listElement = document.getElementById(listId);
+            const cardContainers = listElement.querySelectorAll(".card-container");
+            cardContainers.forEach(container => container.remove());
             listElement.remove();
         }
     }
 
     function deleteCard(cardElement) {
-        if (confirm('Are you sure you want to delete this card?')) {
+        const cardTitle = cardElement.querySelector('h4').textContent;
+
+        if (confirm('카드를 삭제 하시겠습니까?')) {
+            // Close the card popup if it's open for the card being deleted
+            closeCardPopup(cardTitle);
+
+            // Remove card-related data from local storage
+            localStorage.removeItem(cardTitle);
+
+            // Remove the card element from the DOM
             cardElement.remove();
         }
     }
+
+    // ...
+
+    function closeCardPopup(cardTitle) {
+        const popup = document.querySelector(".card-popup");
+        if (popup) {
+            const popupTitle = popup.querySelector("h3").textContent;
+            if (popupTitle === cardTitle) {
+                popup.remove(); // Close the popup if it's open for the deleted card
+            }
+        }
+    }
+
+
+
+
+
+    function closeCardPopup(cardTitle) {
+        const popup = document.querySelector(".card-popup");
+        if (popup) {
+            popup.remove();
+        }
+        localStorage.removeItem(cardTitle);
+    }
+
+    function openCard(cardElement) {
+        if (event.target.classList.contains('edit-card-button') || event.target.classList.contains('add-card-button') || event.target.classList.contains('delete-card-button')) {
+            return; // Don't open the popup for edit, save, or delete actions
+        }
+
+        const cardTitleElement = cardElement.querySelector('h4');
+        const cardTitle = cardTitleElement.textContent;
+        const cardContent = cardElement.querySelector('p').textContent;
+
+        const popupContent = `
+        <div class="card-popup">
+            <div class="card-popup-content">
+                <div class="card-section">
+                    <h3>${cardTitle}</h3>
+                </div>
+                <div class="card-section">
+                    <p>${cardContent}</p>
+                </div>
+                <div class="card-section comments">
+                    <h4>Comments</h4>
+                    <div id="commentsContainer"></div>
+                    <input type="text" class="input-field" placeholder="Add a comment">
+                    <button onclick="addComment(this, '${cardTitle}')">Add Comment</button>
+                </div>
+                <button class="close-popup-button" onclick="closeCardPopup('${cardTitle}')">Close</button>
+            </div>
+        </div>
+    `;
+
+        document.body.insertAdjacentHTML("beforeend", popupContent);
+        loadComments(cardTitle);
+    }
+
+
+    function addComment(buttonElement, cardTitle) {
+        const commentInput = buttonElement.previousElementSibling;
+        const comment = commentInput.value;
+
+        if (comment.trim() !== "") {
+            const commentsContainer = document.getElementById("commentsContainer");
+            const commentElement = document.createElement("div");
+            commentElement.className = "comment";
+
+            const commentText = document.createElement("span");
+            commentText.textContent = comment;
+
+            // Store the comment index as a custom attribute
+            const commentIndex = getComments(cardTitle).length;
+            commentText.setAttribute("data-index", commentIndex);
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.onclick = function () {
+                editComment(commentText, cardTitle, commentIndex);
+            };
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = function () {
+                deleteComment(cardTitle, commentIndex);
+                loadComments(cardTitle);
+            };
+
+            commentElement.appendChild(commentText);
+            commentElement.appendChild(editButton);
+            commentElement.appendChild(deleteButton);
+
+            commentsContainer.appendChild(commentElement);
+            commentInput.value = "";
+
+            saveComment(cardTitle, comment);
+        }
+    }
+
+
+    let comments = {};
+    const cardComments = {};
+
+    function editComment(commentElement, cardTitle, index) {
+        const currentComment = commentElement.textContent;
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.value = currentComment;
+
+        const saveButton = document.createElement("button");
+        saveButton.textContent = "Save";
+        saveButton.onclick = function () {
+            saveEditedComment(commentElement, cardTitle, index, inputField.value);
+        };
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.onclick = function () {
+            commentElement.textContent = currentComment;
+            commentElement.appendChild(editButton);
+            commentElement.appendChild(deleteButton);
+        };
+
+        commentElement.innerHTML = "";
+        commentElement.appendChild(inputField);
+        commentElement.appendChild(saveButton);
+        commentElement.appendChild(cancelButton);
+    }
+
+
+    function saveEditedComment(commentElement, cardTitle, index, newComment) {
+        const cardComments = comments[cardTitle];
+        if (cardComments) {
+            cardComments[index] = newComment;
+            localStorage.setItem(cardTitle, JSON.stringify(cardComments));
+            commentElement.textContent = newComment;
+
+            commentElement.appendChild(editButton); // Append the editButton
+            commentElement.appendChild(deleteButton); // Append the deleteButton
+        }
+    }
+
+
+    function deleteComment(cardTitle, index) {
+        const cardComments = getComments(cardTitle);
+        if (cardComments) {
+            cardComments.splice(index, 1); // Remove the comment at the specified index
+            localStorage.setItem(cardTitle, JSON.stringify(cardComments)); // Save the updated comments
+        }
+    }
+
+    function loadComments(cardTitle) {
+        const commentsContainer = document.getElementById("commentsContainer");
+        commentsContainer.innerHTML = ""; // Clear previous comments
+
+        const cardComments = getComments(cardTitle); // Retrieve comments for the card
+        if (cardComments) {
+            cardComments.forEach((comment, index) => {
+                const commentElement = document.createElement("div");
+                commentElement.className = "comment";
+
+                const commentText = document.createElement("span");
+                commentText.textContent = comment;
+
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.onclick = function () {
+                    editComment(commentText, cardTitle, index);
+                };
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function () {
+                    deleteComment(cardTitle, index);
+                    loadComments(cardTitle); // Reload comments after deletion
+                };
+
+                commentElement.appendChild(commentText);
+                commentElement.appendChild(editButton);
+                commentElement.appendChild(deleteButton);
+
+                commentsContainer.appendChild(commentElement);
+            });
+        }
+    }
+
+    function saveComment(cardTitle, comment) {
+        const cardComments = comments[cardTitle] || [];
+        cardComments.push(comment);
+        comments[cardTitle] = cardComments;
+        localStorage.setItem(cardTitle, JSON.stringify(cardComments));
+    }
+
+    function getComments(cardTitle) {
+        const storedComments = localStorage.getItem(cardTitle);
+        return storedComments ? JSON.parse(storedComments) : [];
+    }
+
+    function closeCardPopup(cardTitle) {
+        const popup = document.querySelector(".card-popup");
+        if (popup) {
+            const popupTitle = popup.querySelector("h3").textContent;
+            if (popupTitle === cardTitle) {
+                popup.remove(); // Close the popup if it's open for the deleted card
+            }
+        }
+    }
+
+
+
 </script>
 </body>
 </html>
-
-
-
-
