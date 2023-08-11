@@ -341,6 +341,7 @@
 
 <div class="logo-container">
     <img src="https://i.postimg.cc/xT7WFpCC/LOGO.png" alt="Logo" class="logo-image">
+    <button id="inviteButton" onclick="showInvitePopup()">Invite User</button>
 </div>
 
 
@@ -385,9 +386,15 @@
         <div class="close-area2">X</div>
         <div id="card-detail-box">
         </div>
-        <form>
-            <button onclick="createComment()">댓글작성</button>
-        </form>
+    </div>
+</div>
+
+<div id="invitePopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 20px; border-radius: 5px;">
+        <h4>Invite User to Board</h4>
+        <input type="text" id="usernameToInvite" placeholder="Enter username to invite">
+        <button onclick="sendInvite()">Invite</button>
+        <button onclick="hideInvitePopup()">Cancel</button>
     </div>
 </div>
 
@@ -397,8 +404,21 @@
         console.log(boardId);
         cardUpdateModalOff();
         cardModalOff()
+        hideInvitePopup()
         sectionDisplay();
     });
+
+    function sendInvite() {
+        console.log("도달")
+    }
+
+    function showInvitePopup() {
+        document.getElementById("invitePopup").style.display = "flex";
+    }
+
+    function hideInvitePopup() {
+        document.getElementById("invitePopup").style.display = "none";
+    }
 
     const modal = document.getElementById("cardUpdateModal")
     const CardModal = document.getElementById("cardModal")
@@ -419,10 +439,19 @@
 
     //-----------------card 상세 보기 modal---------//
     function isCardModalOn(cardId) {
-        // $('#card-detail-box').empty();
+        $('#card-detail-box').empty();
         getCommentList(cardId)
         return CardModal.style.display = "flex"
     }
+
+    function cardModalOff() {
+        CardModal.style.display = "none"
+    }
+
+    const closeBtn2 = CardModal.querySelector(".close-area2")
+    closeBtn2.addEventListener("click", e => {
+        cardModalOff();
+    })
 
     function getCommentList(cardId) {
         $.ajax({
@@ -430,16 +459,27 @@
             url: '/card/' + cardId,
             success: function (res) {
                 let data = res;
-                console.log("cardData")
-                console.log(data['commentResponseDtoList']);
+                // console.log("cardData")
+                // console.log(data['commentResponseDtoList']);
 
                 let tempHtml = `<div id="title-box"><h4>${data['title']}</h4></div>
                                 <div id="content-box">${data['content']}</div>
                                 <div id="comment-box">
-                                `
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">댓글작성</label>
+                                        <input class="form-control" type="text" id="comment-content" name="comment"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" onclick="commentCreate(${cardId})">댓글달기</button>
+                                    </div>
+                                </form>`
 
                 for (let i = 0; i < data['commentResponseDtoList'].length; i++) {
-                    tempHtml += `<div> ${data['commentResponseDtoList'][i]['content']} </div>`;
+                    tempHtml += `<div>${data['commentResponseDtoList'][i]['username']} :${data['commentResponseDtoList'][i]['content']}
+                                    <button onclick="commentUpdate(${data['commentResponseDtoList'][i]['id']})">수정</button>
+                                    <button onclick="commentDelete(${data['commentResponseDtoList'][i]['id']})">삭제</button>
+                                </div>`;
                 }
 
                 tempHtml += `</div>`
@@ -452,41 +492,67 @@
         });
     }
 
-    //check
-    function createComment() {
-        console.log("도달")
-    }
-        // let content = $('#cardContent').val();
-        //
-        // let requestData = {
-        //     "cardId" : cardId,
-        //     "content" : content
-        // }
-        //
-        // console.log("requestData")
-        // console.log(requestData)
-        //
-        // $.ajax({
-        //     url: "/card/comment",
-        //     method: "POST",
-        //     contentType: "application/json",
-        //     data: JSON.stringify(requestData),
-        //     success: function (response) {
-        //         window.location.reload();
-        //     },
-        //     error: function (error) {
-        //         console.error("Error creating section:", error);
-        //     }
-        // });
+    function commentCreate(cardId) {
+        let content = $('#comment-content').val();
 
-    function cardModalOff() {
-        CardModal.style.display = "none"
+        let data = {
+            "cardId" : cardId,
+            "content" : content
+        }
+
+        console.log(data)
+
+        $.ajax({
+            type:'POST',
+            url:'/card/comment',
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function() {
+                alert("성공");
+                window.location.reload();
+            }, error: function() {
+                alert("실패")
+            }
+        })
     }
 
-    const closeBtn2 = CardModal.querySelector(".close-area2")
-    closeBtn2.addEventListener("click", e => {
-        cardModalOff();
-    })
+    function commentUpdate(commentId) {
+        var content = prompt("변경할 내용을 입력해주세요")
+
+        let data = {
+            "content" : content
+        }
+
+        $.ajax({
+            type:'PUT',
+            url:'/card/comment/' + commentId,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function() {
+                alert("comment 수정 완료!");
+                window.location.reload();
+            }, error: function() {
+                alert("실패");
+            }
+        })
+    }
+
+    function commentDelete(commentId) {
+        console.log(commentId)
+
+        $.ajax({
+            url: '/card/comment/' + commentId, // 요청을 보낼 서버의 URL
+            method: 'DELETE', // 요청 메소드 (GET, POST 등)
+            success: function (response) {
+                alert("삭제 완료")
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("삭제 실패")
+                console.log(xhr);
+            }
+        });
+    }
 
     function sectionDisplay() {
         const boardId = localStorage.getItem("boardId");
@@ -496,8 +562,8 @@
             url: '/column/'+ boardId,
             success: function (res) {
                 let data = res['data'];
-                console.log("sectionData: ")
-                console.log(data)
+                // console.log("sectionData: ")
+                // console.log(data)
                 for (let i = 0; i < data.length; i++) { //보드 갯수만큼
 
                     let tempHtml1 = `<div class="card-container">`
