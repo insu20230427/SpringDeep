@@ -16,4 +16,7 @@ public interface UserBoardRelationRepository extends JpaRepository<UserBoardRela
     // 반환 형식을 List<Board>로 변경
     @Query("SELECT ubr.board FROM UserBoardRelation ubr WHERE ubr.user = :user AND ubr.invitationStatus = 'ACCEPTED'")
     List<Board> findInvitedBoardsByUser(@Param("user") User user);
+
+
+    List<UserBoardRelation> findByUserIdAndInvitationStatus(Long id, String status);
 }

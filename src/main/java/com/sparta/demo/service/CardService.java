@@ -52,6 +52,15 @@ public class CardService {
         return cardResponseDtoList;
     }
 
+    // 카드 하나 조회
+    public CardResponseDto getOneCard(Long id) {
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("카드가 존재하지 않습니다.")
+        );
+
+        return new CardResponseDto(card);
+    }
+
     // 카드 수정
     @Transactional
     public CardResponseDto updateCard(Long id, CardRequestDto requestDto, User user) {

@@ -23,7 +23,7 @@
             padding: 10px;
         }
 
-        .list {
+        .section {
             background-color: #f0f0f0;
             border-radius: 5px;
             margin-right: 10px;
@@ -40,7 +40,7 @@
             cursor: pointer; /* Add cursor style to indicate clickability */
         }
 
-        .add-list-button,
+        .add-section-button,
         .add-card-button {
             background-color: cornflowerblue;
             border: none;
@@ -64,8 +64,8 @@
             transition: background-color 0.3s ease-in-out;
         }
 
-        .edit-list-button,
-        .delete-list-button {
+        .edit-section-button,
+        .delete-section-button {
             background-color: lightblue;
             border: none;
             border-radius: 5px;
@@ -133,13 +133,13 @@
             max-width: 120px; /* Adjust the value as needed */
         }
 
-        .list-title-container {
+        .section-title-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .list-button-container {
+        .section-button-container {
             display: flex;
             gap: 5px;
         }
@@ -212,6 +212,130 @@
 
 
     </style>
+
+    <style>
+        #cardUpdateModal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 2;
+        }
+
+        #cardUpdateModal .modal-window {
+            background: rgba(69, 139, 197, 0.70);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+
+        #cardUpdateModal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #cardUpdateModal .title h2 {
+            display: inline;
+        }
+
+        #cardUpdateModal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #cardUpdateModal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+    </style>
+
+    <style>
+        #cardModal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 2;
+        }
+
+        #cardModal .modal-window {
+            background: rgba(69, 139, 197, 0.70);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+
+        #cardModal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #cardModal .title h2 {
+            display: inline;
+        }
+
+        #cardModal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #cardModal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
@@ -221,58 +345,279 @@
 
 
 <div class="board">
-    <!-- Lists and cards -->
-    <div class="add-list-button" onclick="createListInput()">+</div>
+    <!-- sections and cards -->
+    <div class="add-section-button" onclick="createSectionInput()">+</div>
+</div>
+
+<div id="cardUpdateModal" class="modal-overlay">
+    <div class="modal-window">
+        <form>
+            <div class="title">
+                <h2>카드수정</h2>
+            </div>
+            <div class="close-area">X</div>
+            <div class="mb-3">
+                <label class="form-label">제목</label>
+                <input class="form-control" type="text" id="cardTitle" name="cardname"/>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">내용</label>
+                <input class="form-control" type="text" id="cardContent" name="cardContent"/>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">색상</label>
+                <select name="boardColor" class="form-select" id="cardColor">
+                    <option selected></option>
+                    <option value="lightseagreen">lightseagreen</option>
+                    <option value="lightcoral">lightcoral</option>
+                    <option value="coral">coral</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button type="button" onclick="updateCard()">수정</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="cardModal" class="modal-overlay">
+    <div class="modal-window">
+        <div class="close-area2">X</div>
+        <div id="card-detail-box">
+        </div>
+        <form>
+            <button onclick="createComment()">댓글작성</button>
+        </form>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
         let boardId = localStorage.getItem("boardId");
         console.log(boardId);
+        cardUpdateModalOff();
+        cardModalOff()
+        sectionDisplay();
     });
 
-    function createListInput() {
-        const inputContainer = document.createElement("div");
-        inputContainer.innerHTML = `
-            <input type="text" class="input-field" placeholder="Enter list name">
-            <button class="add-card-button" onclick="createListFromInput(this)">Add List</button>
-        `;
-        document.querySelector(".board").insertBefore(inputContainer, document.querySelector(".add-list-button"));
+    const modal = document.getElementById("cardUpdateModal")
+    const CardModal = document.getElementById("cardModal")
+    let cardIdTemp = null;
+    function isModalOn(id) {
+        cardIdTemp = id;
+        return modal.style.display = "flex"
     }
 
+    function cardUpdateModalOff() {
+        modal.style.display = "none"
+    }
 
-    let listCounter = 0;
+    const closeBtn = modal.querySelector(".close-area")
+    closeBtn.addEventListener("click", e => {
+        cardUpdateModalOff();
+    })
 
-    function createListFromInput(buttonElement) {
-        const inputField = buttonElement.previousElementSibling;
-        const listName = inputField.value;
-        if (listName.trim() !== "") {
-            const newList = document.createElement("div");
-            newList.className = "list";
-            newList.id = `list-${listCounter++}`; // Assign a unique ID
-            newList.innerHTML = `
-    <div class="list-title-container">
-        <h3>${listName}</h3>
-        <div class="list-button-container">
-            <button class="edit-list-button" onclick="editListName(this.parentElement.previousElementSibling)">Edit</button>
-            <button class="delete-list-button" onclick="deleteList('${newList.id}')">Delete</button>
-        </div>
-    </div>
-    <button class="add-card-button" onclick="createCardFromInput(this)">Add Card</button>`;
+    //-----------------card 상세 보기 modal---------//
+    function isCardModalOn(cardId) {
+        // $('#card-detail-box').empty();
+        getCommentList(cardId)
+        return CardModal.style.display = "flex"
+    }
 
-            document.querySelector(".board").insertBefore(newList, buttonElement.parentElement);
+    function getCommentList(cardId) {
+        $.ajax({
+            type: 'GET',
+            url: '/card/' + cardId,
+            success: function (res) {
+                let data = res;
+                console.log("cardData")
+                console.log(data['commentResponseDtoList']);
+
+                let tempHtml = `<div id="title-box"><h4>${data['title']}</h4></div>
+                                <div id="content-box">${data['content']}</div>
+                                <div id="comment-box">
+                                `
+
+                for (let i = 0; i < data['commentResponseDtoList'].length; i++) {
+                    tempHtml += `<div> ${data['commentResponseDtoList'][i]['content']} </div>`;
+                }
+
+                tempHtml += `</div>`
+
+                $('#card-detail-box').append(tempHtml);
+
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+    }
+
+    //check
+    function createComment() {
+        console.log("도달")
+    }
+        // let content = $('#cardContent').val();
+        //
+        // let requestData = {
+        //     "cardId" : cardId,
+        //     "content" : content
+        // }
+        //
+        // console.log("requestData")
+        // console.log(requestData)
+        //
+        // $.ajax({
+        //     url: "/card/comment",
+        //     method: "POST",
+        //     contentType: "application/json",
+        //     data: JSON.stringify(requestData),
+        //     success: function (response) {
+        //         window.location.reload();
+        //     },
+        //     error: function (error) {
+        //         console.error("Error creating section:", error);
+        //     }
+        // });
+
+    function cardModalOff() {
+        CardModal.style.display = "none"
+    }
+
+    const closeBtn2 = CardModal.querySelector(".close-area2")
+    closeBtn2.addEventListener("click", e => {
+        cardModalOff();
+    })
+
+    function sectionDisplay() {
+        const boardId = localStorage.getItem("boardId");
+
+        $.ajax({
+            type: 'GET',
+            url: '/column/'+ boardId,
+            success: function (res) {
+                let data = res['data'];
+                console.log("sectionData: ")
+                console.log(data)
+                for (let i = 0; i < data.length; i++) { //보드 갯수만큼
+
+                    let tempHtml1 = `<div class="card-container">`
+
+                    if(data[i]['cards'].length>0){
+                        for(let j = 0; j < data[i]['cards'].length; j++) { // card 갯수만큼
+
+                            let tempHtml2 = `<div class="card" style="background-color: ${data[i]['cards'][j]['color']};" onclick="isCardModalOn(${data[i]['cards'][j]['id']})">
+                                                    <h4>${data[i]['cards'][j]['title']}</h4>
+                                                    <p>${data[i]['cards'][j]['content']}</p>
+                                                    <button type="button" class="edit-card-button" onclick="isModalOn(${data[i]['cards'][j]['id']})">Edit</button>
+                                                    <button type="button" class="edit-card-button" onclick="deleteCard(${data[i]['cards'][j]['id']})">Delete</button>
+                                             </div>`
+
+                            tempHtml1 += tempHtml2
+                        }
+                        tempHtml1 += `</div>`
+                    }
+                    const newBoard = document.createElement("div");
+                    newBoard.className = "section";
+                    newBoard.innerHTML = `<div class="section-title-container">
+                                             <h3>${data[i]['sectionName']}</h3>
+                                             <div class="section-button-container">
+                                                 <button class="edit-section-button" onclick="updateSection('${data[i]['sectionId']}')">Edit</button>
+                                                 <button class="delete-section-button" onclick="deleteSection('${data[i]['sectionId']}')">Delete</button>
+                                             </div>
+                                         </div>`+ tempHtml1 +`
+                                         <button class="add-card-button" onclick="createCardFromInput(this, ${data[i]['sectionId']})">Add Card</button>`
+
+                    var board = document.querySelector(".board");
+                    board.insertBefore(newBoard, board.firstChild);
+                    // createNewBoard(data[i]['id'], data[i]['boardname'], data[i]['boardColor'])
+
+                }
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+    }
+
+    function updateSection(sectionId) {
+        var sectionName = prompt("어떤이름으로 변경하시겠습니까?")
+
+        let data = {
+            "columnName" : sectionName
         }
+
+        $.ajax({
+            type:'PUT',
+            url:'/column/' + sectionId,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(response) {
+                alert("column 수정 완료!");
+                window.location.reload();
+            }, error: function(xhr, textStatus, errorThrown) {
+                alert("실패");
+            }
+        })
+    }
+
+    function deleteSection(sectionId) {
+        $.ajax({
+            url: '/column/' + sectionId, // 요청을 보낼 서버의 URL
+            method: 'DELETE', // 요청 메소드 (GET, POST 등)
+            success: function (response) {
+                alert("삭제 완료")
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("삭제 실패")
+                console.log(xhr);
+            }
+        });
+    }
+
+    function createSectionInput() {
+        const inputContainer = document.createElement("div");
+        inputContainer.innerHTML = `
+            <input type="text" class="input-field" placeholder="Enter section name">
+            <button class="add-card-button" onclick="createSectionFromInput(this)">Add section</button>
+        `;
+        document.querySelector(".board").insertBefore(inputContainer, document.querySelector(".add-section-button"));
+    }
+
+    function createSectionFromInput(buttonElement) {
+        const inputField = buttonElement.previousElementSibling;
+        const sectionName = inputField.value;
+
         buttonElement.parentElement.remove();
+        // POST요청
+        const boardId = localStorage.getItem("boardId");
+        const requestData = {
+            boardId: boardId,
+            columnName: sectionName
+        };
+
+        $.ajax({
+            url: "/column",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(requestData),
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function (error) {
+                console.error("Error creating section:", error);
+            }
+        });
     }
 
 
     const isCreatingCardMap = {};
+    let selectedColorIcon = null;
 
-    function createCardFromInput(buttonElement) {
-        const listElement = buttonElement.parentElement;
+    function createCardFromInput(buttonElement, id) {
+        const sectionElement = buttonElement.parentElement;
 
-        if (!isCreatingCardMap[listElement.id]) {
-            isCreatingCardMap[listElement.id] = true;
+        if (!isCreatingCardMap[sectionElement.id]) {
+            isCreatingCardMap[sectionElement.id] = true;
 
             buttonElement.style.display = "none";
 
@@ -291,10 +636,10 @@
             const colorIconsContainer = document.createElement("div");
             colorIconsContainer.className = "input-field";
             colorIconsContainer.innerHTML = `
-            <span class="color-icon" style="background-color: lightseagreen;" onclick="selectColor(this)"></span>
-            <span class="color-icon" style="background-color: lightcoral;" onclick="selectColor(this)"></span>
-            <span class="color-icon" style="background-color: coral;" onclick="selectColor(this)"></span>
-        `;
+                <span class="color-icon" style="background-color: lightseagreen;" onclick="selectColor('lightseagreen')" ></span>
+                <span class="color-icon" style="background-color: lightcoral;" onclick="selectColor('lightcoral')" ></span>
+                <span class="color-icon" style="background-color: coral;" onclick="selectColor('coral')" ></span>
+                `;
 
             const deleteCardButton = document.createElement("button");
             deleteCardButton.className = "delete-card-button";
@@ -312,50 +657,39 @@
             addCardButton.onclick = function () {
                 const cardTitle = inputField.value;
                 const cardContent = contentField.value;
-                const selectedColor = selectedColorIcon ? selectedColorIcon.style.backgroundColor : '';
+                const selectedColor = selectedColorIcon;
 
                 if (cardTitle.trim() !== "" && cardContent.trim() !== "" && selectedColor) {
                     const newCard = document.createElement("div");
                     newCard.className = "card";
                     newCard.style.backgroundColor = selectedColor;
 
-                    const cardTitleElement = document.createElement("h4");
-                    cardTitleElement.textContent = cardTitle;
-
-                    const cardContentElement = document.createElement("p");
-                    cardContentElement.textContent = cardContent;
-
-                    const editButton = document.createElement("button");
-                    editButton.className = "edit-card-button";
-                    editButton.innerText = "Edit";
-                    editButton.onclick = function () {
-                        if (editButton.innerText === "Edit") {
-                            editCard(newCard, editButton);
-                        } else {
-                            saveEditedCard(newCard, editButton);
-                        }
+                    const sectionId = id
+                    const requestData = {
+                        sectionId: sectionId,
+                        title: cardTitle,
+                        content: cardContent,
+                        color: selectedColor
                     };
 
-                    newCard.appendChild(cardTitleElement);
-                    newCard.appendChild(cardContentElement);
-                    newCard.appendChild(editButton);
-                    newCard.appendChild(deleteCardButton);
-
-                    newCard.onclick = function () {
-                        openCard(newCard);
-                    }; // Open the pop-up on click
-
-                    cardContainer.appendChild(newCard);
-
-                    cardContainer.removeChild(inputField);
-                    cardContainer.removeChild(contentField);
-                    cardContainer.removeChild(colorIconsContainer);
-                    cardContainer.removeChild(addCardButton);
-                    selectedColorIcon.classList.remove("selected");
-                    selectedColorIcon = null;
+                    //Post(ajax)
+                    $.ajax({
+                        url: "/card",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(requestData),
+                        success: function (response) {
+                            window.location.reload();
+                        },
+                        error: function (error) {
+                            console.error("Error creating section:", error);
+                        }
+                    });
                 }
 
-                isCreatingCardMap[listElement.id] = false;
+
+
+                isCreatingCardMap[sectionElement.id] = false;
                 buttonElement.style.display = "block";
             };
 
@@ -363,36 +697,20 @@
             cardContainer.appendChild(contentField);
             cardContainer.appendChild(colorIconsContainer);
             cardContainer.appendChild(addCardButton);
-
+            //
             buttonElement.parentElement.insertBefore(cardContainer, buttonElement);
+
+
         }
     }
 
-
-    let selectedColorIcon = null;
 
     function selectColor(colorIcon) {
-        if (selectedColorIcon) {
-            selectedColorIcon.classList.remove("selected");
-        }
         selectedColorIcon = colorIcon;
-        colorIcon.classList.add("selected");
-    }
-
-    function editListName(editButton) {
-        const listTitleContainer = editButton.parentElement.parentElement;
-        const listNameElement = listTitleContainer.querySelector('h3');
-
-        const currentListName = listNameElement.textContent;
-        const newName = prompt('Section 이름을 변경하시겠습니까?:', currentListName);
-
-        if (newName && newName.trim() !== "") {
-            listNameElement.textContent = newName;
-        }
     }
 
 
-    function editCard(cardElement) {
+    function editCard(cardElement, cardId) {
         const cardTitleElement = cardElement.querySelector('h4');
         const cardContentElement = cardElement.querySelector('p');
         const cardColor = cardElement.style.backgroundColor;
@@ -457,239 +775,259 @@
     }
 
 
-    function deleteList(listId) {
-        if (confirm('모두 삭제 하시겠습니까?')) {
-            const listElement = document.getElementById(listId);
-            const cardContainers = listElement.querySelectorAll(".card-container");
-            cardContainers.forEach(container => container.remove());
-            listElement.remove();
+    // function deletesection(sectionId) {
+    //     if (confirm('모두 삭제 하시겠습니까?')) {
+    //         const sectionElement = document.getElementById(sectionId);
+    //         const cardContainers = sectionElement.querySelectorAll(".card-container");
+    //         cardContainers.forEach(container => container.remove());
+    //         sectionElement.remove();
+    //     }
+    // }
+
+    function updateCard() {
+        let cardTitle = $('#cardTitle').val();
+        let cardContent =$('#cardContent').val();
+        let cardColor = $('#cardColor').val();
+
+        let data = {
+            "title" : cardTitle,
+            "content" : cardContent,
+            "color" : cardColor
         }
+
+        $.ajax({
+            type:'PUT',
+            url:'/card/' + cardIdTemp,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(response) {
+                alert("성공");
+                window.location.reload();
+            }, error: function(xhr, textStatus, errorThrown) {
+                const errorDiv = document.getElementById('update-failed');
+                errorDiv.style.display = 'block';
+
+                let message = xhr['responseJSON']['data'];
+                errorDiv.innerHTML += `<br>`;
+                Object.keys(message).forEach(function(key) {
+                    errorDiv.innerHTML += message[key] + `<br>`;
+                });
+            }
+        })
     }
 
-    function deleteCard(cardElement) {
-        const cardTitle = cardElement.querySelector('h4').textContent;
-
-        if (confirm('카드를 삭제 하시겠습니까?')) {
-            // Close the card popup if it's open for the card being deleted
-            closeCardPopup(cardTitle);
-
-            // Remove card-related data from local storage
-            localStorage.removeItem(cardTitle);
-
-            // Remove the card element from the DOM
-            cardElement.remove();
-        }
+    function deleteCard(cardId) {
+        $.ajax({
+            url: '/card/' + cardId, // 요청을 보낼 서버의 URL
+            method: 'DELETE', // 요청 메소드 (GET, POST 등)
+            success: function (response) {
+                alert("삭제 완료")
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("삭제 실패")
+                console.log(xhr);
+            }
+        });
     }
 
     // ...
 
-    function closeCardPopup(cardTitle) {
-        const popup = document.querySelector(".card-popup");
-        if (popup) {
-            const popupTitle = popup.querySelector("h3").textContent;
-            if (popupTitle === cardTitle) {
-                popup.remove(); // Close the popup if it's open for the deleted card
-            }
-        }
-    }
+    // function closeCardPopup(cardTitle) {
+    //     const popup = document.querySelector(".card-popup");
+    //     if (popup) {
+    //         const popupTitle = popup.querySelector("h3").textContent;
+    //         if (popupTitle === cardTitle) {
+    //             popup.remove(); // Close the popup if it's open for the deleted card
+    //         }
+    //     }
+    // }
 
 
 
 
-
-    function closeCardPopup(cardTitle) {
-        const popup = document.querySelector(".card-popup");
-        if (popup) {
-            popup.remove();
-        }
-        localStorage.removeItem(cardTitle);
-    }
-
-    function openCard(cardElement) {
-        if (event.target.classList.contains('edit-card-button') || event.target.classList.contains('add-card-button') || event.target.classList.contains('delete-card-button')) {
-            return; // Don't open the popup for edit, save, or delete actions
-        }
-
-        const cardTitleElement = cardElement.querySelector('h4');
-        const cardTitle = cardTitleElement.textContent;
-        const cardContent = cardElement.querySelector('p').textContent;
-
-        const popupContent = `
-        <div class="card-popup">
-            <div class="card-popup-content">
-                <div class="card-section">
-                    <h3>${cardTitle}</h3>
-                </div>
-                <div class="card-section">
-                    <p>${cardContent}</p>
-                </div>
-                <div class="card-section comments">
-                    <h4>Comments</h4>
-                    <div id="commentsContainer"></div>
-                    <input type="text" class="input-field" placeholder="Add a comment">
-                    <button onclick="addComment(this, '${cardTitle}')">Add Comment</button>
-                </div>
-                <button class="close-popup-button" onclick="closeCardPopup('${cardTitle}')">Close</button>
-            </div>
-        </div>
-    `;
-
-        document.body.insertAdjacentHTML("beforeend", popupContent);
-        loadComments(cardTitle);
-    }
+    // function openCard(cardElement) {
+    //     if (event.target.classsection.contains('edit-card-button') || event.target.classsection.contains('add-card-button') || event.target.classsection.contains('delete-card-button')) {
+    //         return; // Don't open the popup for edit, save, or delete actions
+    //     }
+    //
+    //     const cardTitleElement = cardElement.querySelector('h4');
+    //     const cardTitle = cardTitleElement.textContent;
+    //     const cardContent = cardElement.querySelector('p').textContent;
+    //
+    //     const popupContent = `
+    //     <div class="card-popup">
+    //         <div class="card-popup-content">
+    //             <div class="card-section">
+    //                 <h3>${cardTitle}</h3>
+    //             </div>
+    //             <div class="card-section">
+    //                 <p>${cardContent}</p>
+    //             </div>
+    //             <div class="card-section comments">
+    //                 <h4>Comments</h4>
+    //                 <div id="commentsContainer"></div>
+    //                 <input type="text" class="input-field" placeholder="Add a comment">
+    //                 <button onclick="addComment(this, '${cardTitle}')">Add Comment</button>
+    //             </div>
+    //             <button class="close-popup-button" onclick="closeCardPopup('${cardTitle}')">Close</button>
+    //         </div>
+    //     </div>
+    // `;
+    //
+    //     document.body.insertAdjacentHTML("beforeend", popupContent);
+    //     loadComments(cardTitle);
+    // }
 
 
-    function addComment(buttonElement, cardTitle) {
-        const commentInput = buttonElement.previousElementSibling;
-        const comment = commentInput.value;
-
-        if (comment.trim() !== "") {
-            const commentsContainer = document.getElementById("commentsContainer");
-            const commentElement = document.createElement("div");
-            commentElement.className = "comment";
-
-            const commentText = document.createElement("span");
-            commentText.textContent = comment;
-
-            // Store the comment index as a custom attribute
-            const commentIndex = getComments(cardTitle).length;
-            commentText.setAttribute("data-index", commentIndex);
-
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            editButton.onclick = function () {
-                editComment(commentText, cardTitle, commentIndex);
-            };
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.onclick = function () {
-                deleteComment(cardTitle, commentIndex);
-                loadComments(cardTitle);
-            };
-
-            commentElement.appendChild(commentText);
-            commentElement.appendChild(editButton);
-            commentElement.appendChild(deleteButton);
-
-            commentsContainer.appendChild(commentElement);
-            commentInput.value = "";
-
-            saveComment(cardTitle, comment);
-        }
-    }
-
-
-    let comments = {};
-    const cardComments = {};
-
-    function editComment(commentElement, cardTitle, index) {
-        const currentComment = commentElement.textContent;
-        const inputField = document.createElement("input");
-        inputField.type = "text";
-        inputField.value = currentComment;
-
-        const saveButton = document.createElement("button");
-        saveButton.textContent = "Save";
-        saveButton.onclick = function () {
-            saveEditedComment(commentElement, cardTitle, index, inputField.value);
-        };
-
-        const cancelButton = document.createElement("button");
-        cancelButton.textContent = "Cancel";
-        cancelButton.onclick = function () {
-            commentElement.textContent = currentComment;
-            commentElement.appendChild(editButton);
-            commentElement.appendChild(deleteButton);
-        };
-
-        commentElement.innerHTML = "";
-        commentElement.appendChild(inputField);
-        commentElement.appendChild(saveButton);
-        commentElement.appendChild(cancelButton);
-    }
+    // function addComment(buttonElement, cardTitle) {
+    //     const commentInput = buttonElement.previousElementSibling;
+    //     const comment = commentInput.value;
+    //
+    //     if (comment.trim() !== "") {
+    //         const commentsContainer = document.getElementById("commentsContainer");
+    //         const commentElement = document.createElement("div");
+    //         commentElement.className = "comment";
+    //
+    //         const commentText = document.createElement("span");
+    //         commentText.textContent = comment;
+    //
+    //         // Store the comment index as a custom attribute
+    //         const commentIndex = getComments(cardTitle).length;
+    //         commentText.setAttribute("data-index", commentIndex);
+    //
+    //         const editButton = document.createElement("button");
+    //         editButton.textContent = "Edit";
+    //         editButton.onclick = function () {
+    //             editComment(commentText, cardTitle, commentIndex);
+    //         };
+    //
+    //         const deleteButton = document.createElement("button");
+    //         deleteButton.textContent = "Delete";
+    //         deleteButton.onclick = function () {
+    //             deleteComment(cardTitle, commentIndex);
+    //             loadComments(cardTitle);
+    //         };
+    //
+    //         commentElement.appendChild(commentText);
+    //         commentElement.appendChild(editButton);
+    //         commentElement.appendChild(deleteButton);
+    //
+    //         commentsContainer.appendChild(commentElement);
+    //         commentInput.value = "";
+    //
+    //         saveComment(cardTitle, comment);
+    //     }
+    // }
 
 
-    function saveEditedComment(commentElement, cardTitle, index, newComment) {
-        const cardComments = comments[cardTitle];
-        if (cardComments) {
-            cardComments[index] = newComment;
-            localStorage.setItem(cardTitle, JSON.stringify(cardComments));
-            commentElement.textContent = newComment;
+    // let comments = {};
+    // const cardComments = {};
 
-            commentElement.appendChild(editButton); // Append the editButton
-            commentElement.appendChild(deleteButton); // Append the deleteButton
-        }
-    }
-
-
-    function deleteComment(cardTitle, index) {
-        const cardComments = getComments(cardTitle);
-        if (cardComments) {
-            cardComments.splice(index, 1); // Remove the comment at the specified index
-            localStorage.setItem(cardTitle, JSON.stringify(cardComments)); // Save the updated comments
-        }
-    }
-
-    function loadComments(cardTitle) {
-        const commentsContainer = document.getElementById("commentsContainer");
-        commentsContainer.innerHTML = ""; // Clear previous comments
-
-        const cardComments = getComments(cardTitle); // Retrieve comments for the card
-        if (cardComments) {
-            cardComments.forEach((comment, index) => {
-                const commentElement = document.createElement("div");
-                commentElement.className = "comment";
-
-                const commentText = document.createElement("span");
-                commentText.textContent = comment;
-
-                const editButton = document.createElement("button");
-                editButton.textContent = "Edit";
-                editButton.onclick = function () {
-                    editComment(commentText, cardTitle, index);
-                };
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.onclick = function () {
-                    deleteComment(cardTitle, index);
-                    loadComments(cardTitle); // Reload comments after deletion
-                };
-
-                commentElement.appendChild(commentText);
-                commentElement.appendChild(editButton);
-                commentElement.appendChild(deleteButton);
-
-                commentsContainer.appendChild(commentElement);
-            });
-        }
-    }
-
-    function saveComment(cardTitle, comment) {
-        const cardComments = comments[cardTitle] || [];
-        cardComments.push(comment);
-        comments[cardTitle] = cardComments;
-        localStorage.setItem(cardTitle, JSON.stringify(cardComments));
-    }
-
-    function getComments(cardTitle) {
-        const storedComments = localStorage.getItem(cardTitle);
-        return storedComments ? JSON.parse(storedComments) : [];
-    }
-
-    function closeCardPopup(cardTitle) {
-        const popup = document.querySelector(".card-popup");
-        if (popup) {
-            const popupTitle = popup.querySelector("h3").textContent;
-            if (popupTitle === cardTitle) {
-                popup.remove(); // Close the popup if it's open for the deleted card
-            }
-        }
-    }
+    // function editComment(commentElement, cardTitle, index) {
+    //     const currentComment = commentElement.textContent;
+    //     const inputField = document.createElement("input");
+    //     inputField.type = "text";
+    //     inputField.value = currentComment;
+    //
+    //     const saveButton = document.createElement("button");
+    //     saveButton.textContent = "Save";
+    //     saveButton.onclick = function () {
+    //         saveEditedComment(commentElement, cardTitle, index, inputField.value);
+    //     };
+    //
+    //     const cancelButton = document.createElement("button");
+    //     cancelButton.textContent = "Cancel";
+    //     cancelButton.onclick = function () {
+    //         commentElement.textContent = currentComment;
+    //         commentElement.appendChild(editButton);
+    //         commentElement.appendChild(deleteButton);
+    //     };
+    //
+    //     commentElement.innerHTML = "";
+    //     commentElement.appendChild(inputField);
+    //     commentElement.appendChild(saveButton);
+    //     commentElement.appendChild(cancelButton);
+    // }
 
 
+    // function saveEditedComment(commentElement, cardTitle, index, newComment) {
+    //     const cardComments = comments[cardTitle];
+    //     if (cardComments) {
+    //         cardComments[index] = newComment;
+    //         localStorage.setItem(cardTitle, JSON.stringify(cardComments));
+    //         commentElement.textContent = newComment;
+    //
+    //         commentElement.appendChild(editButton); // Append the editButton
+    //         commentElement.appendChild(deleteButton); // Append the deleteButton
+    //     }
+    // }
 
+
+    // function deleteComment(cardTitle, index) {
+    //     const cardComments = getComments(cardTitle);
+    //     if (cardComments) {
+    //         cardComments.splice(index, 1); // Remove the comment at the specified index
+    //         localStorage.setItem(cardTitle, JSON.stringify(cardComments)); // Save the updated comments
+    //     }
+    // }
+
+    // function loadComments(cardTitle) {
+    //     const commentsContainer = document.getElementById("commentsContainer");
+    //     commentsContainer.innerHTML = ""; // Clear previous comments
+    //
+    //     const cardComments = getComments(cardTitle); // Retrieve comments for the card
+    //     if (cardComments) {
+    //         cardComments.forEach((comment, index) => {
+    //             const commentElement = document.createElement("div");
+    //             commentElement.className = "comment";
+    //
+    //             const commentText = document.createElement("span");
+    //             commentText.textContent = comment;
+    //
+    //             const editButton = document.createElement("button");
+    //             editButton.textContent = "Edit";
+    //             editButton.onclick = function () {
+    //                 editComment(commentText, cardTitle, index);
+    //             };
+    //
+    //             const deleteButton = document.createElement("button");
+    //             deleteButton.textContent = "Delete";
+    //             deleteButton.onclick = function () {
+    //                 deleteComment(cardTitle, index);
+    //                 loadComments(cardTitle); // Reload comments after deletion
+    //             };
+    //
+    //             commentElement.appendChild(commentText);
+    //             commentElement.appendChild(editButton);
+    //             commentElement.appendChild(deleteButton);
+    //
+    //             commentsContainer.appendChild(commentElement);
+    //         });
+    //     }
+    // }
+
+    // function saveComment(cardTitle, comment) {
+    //     const cardComments = comments[cardTitle] || [];
+    //     cardComments.push(comment);
+    //     comments[cardTitle] = cardComments;
+    //     localStorage.setItem(cardTitle, JSON.stringify(cardComments));
+    // }
+
+    // function getComments(cardTitle) {
+    //     const storedComments = localStorage.getItem(cardTitle);
+    //     return storedComments ? JSON.parse(storedComments) : [];
+    // }
+
+    // function closeCardPopup(cardTitle) {
+    //     const popup = document.querySelector(".card-popup");
+    //     if (popup) {
+    //         const popupTitle = popup.querySelector("h3").textContent;
+    //         if (popupTitle === cardTitle) {
+    //             popup.remove(); // Close the popup if it's open for the deleted card
+    //         }
+    //     }
+    // }
 </script>
 </body>
 </html>

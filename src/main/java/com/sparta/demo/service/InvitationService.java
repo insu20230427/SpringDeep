@@ -3,6 +3,7 @@ package com.sparta.demo.service;
 
 import com.sparta.demo.dto.response.ApiResponseDto;
 import com.sparta.demo.dto.response.BoardResponseDto;
+import com.sparta.demo.dto.response.InvitationResponseDto;
 import com.sparta.demo.entity.Board;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.entity.UserBoardRelation;
@@ -14,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -61,5 +65,16 @@ public class InvitationService {
         userBoardRelationRepository.save(relation);
 
         return ResponseEntity.ok(new ApiResponseDto(HttpStatus.OK.value(), "초대 수락 성공", new BoardResponseDto(relation.getBoard())));
+    }
+
+    public List<InvitationResponseDto> getAllInvite(User user) {
+        List<UserBoardRelation> invitedLIst = userBoardRelationRepository.findByUserIdAndInvitationStatus(user.getId(), "INVITED");
+        List<InvitationResponseDto> invitationResponseDtoList = new ArrayList<>();
+
+        for (int i = 0; i < invitedLIst.size(); i++) {
+            invitationResponseDtoList.add(new InvitationResponseDto(invitedLIst.get(i)));
+        }
+
+        return invitationResponseDtoList;
     }
 }
