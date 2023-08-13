@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -450,7 +450,31 @@
         confirmModalOff()
         setBoard()
         invitedDisplay()
+        getUsername()
     });
+
+    // <div className="user-name">
+    //     <span> </span>님 안녕하세요
+    // </div>
+    function getUsername() {
+        $.ajax({
+            type: 'GET',
+            url: '/auth/get-user',
+            success: function (res) {
+                let data = res;
+                const newBoard = document.createElement("div");
+                newBoard.className = "user-name";
+                newBoard.innerHTML = `<span>${data} </span>님 안녕하세요`
+
+                var container = document.querySelector(".login-signup-container");
+
+                var firstChild = container.firstChild; // 첫 번째 자식 요소 가져오기
+                container.insertBefore(newBoard, firstChild);
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+    }
 
     // 로그아웃 로직
     function deleteCookie(name) {
