@@ -7,6 +7,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -42,16 +43,15 @@ public class BoardController {
         return boardService.lookupBoard(id);
     }
 
+    @ResponseBody
     @PutMapping("/Board/{id}") // 보드 수정
-    public String updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-         boardService.updateBoard(id, requestDto, userDetails.getUser());
-         return "redirect:/";
+    public ResponseEntity<ApiResponseDto> updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+         return boardService.updateBoard(id, requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/Board/{id}") // 상세 보드 삭제
-    public String deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-         boardService.deleteBoard(id, userDetails.getUser());
-         return "redirect:/";
+    public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+         return boardService.deleteBoard(id, userDetails.getUser());
     }
 }
 

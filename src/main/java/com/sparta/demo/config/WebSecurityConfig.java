@@ -63,12 +63,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/invitation/**").permitAll()
-                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
         http.formLogin((formLogin) ->
                 formLogin
-                        .loginPage("/api/user/login-page").permitAll()
+                        .loginPage("/login-page").permitAll()
         );
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

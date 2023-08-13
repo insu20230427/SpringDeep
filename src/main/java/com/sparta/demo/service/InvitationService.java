@@ -4,6 +4,7 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.response.ApiResponseDto;
 import com.sparta.demo.dto.response.BoardResponseDto;
 import com.sparta.demo.dto.response.InvitationResponseDto;
+import com.sparta.demo.dto.reuqest.InvitationRequestDto;
 import com.sparta.demo.entity.Board;
 import com.sparta.demo.entity.User;
 import com.sparta.demo.entity.UserBoardRelation;
@@ -29,15 +30,21 @@ public class InvitationService {
     @Autowired
     private UserBoardRelationRepository userBoardRelationRepository;
 
-    public ResponseEntity<ApiResponseDto> inviteUserToBoard(Long userId, Long boardId) {
-        User user = userRepository.findById(userId)
+    public ResponseEntity<ApiResponseDto> inviteUserToBoard(InvitationRequestDto requestDto) {
+        User user = userRepository.findByUsername(requestDto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 유저입니다."));
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 보드입니다."));
 
         // 해당되는 userId, BoardId가 존재하지 않거나, 이미 초대된 사용자임을 검증하는 로직
-        UserBoardRelation existingRelation = userBoardRelationRepository.findByUserIdAndBoardId(userId, boardId);
-        if (existingRelation != null && "INVITED".equals(existingRelation.getInvitationStatus())) {
+//        UserBoardRelation existingRelation = userBoardRelationRepository.findByUserIdAndBoardId(user.getId(), board.getId());
+//        if (existingRelation != null && "INVITED".equals(existingRelation.getInvitationStatus())) {
+//            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "이미 초대된 사용자입니다."));
+//        }
+
+//      해당되는 초대가 있으면 -> 초대하지 않는다.
+        UserBoardRelation existingRelation = userBoardRelationRepository.findByUserIdAndBoardId(user.getId(), board.getId());
+        if (existingRelation != null) {
             return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "이미 초대된 사용자입니다."));
         }
 
@@ -50,7 +57,6 @@ public class InvitationService {
         userBoardRelationRepository.save(relation);
 
         return ResponseEntity.ok(new ApiResponseDto(HttpStatus.OK.value(), "보드 초대 성공"));
-
     }
 
     public ResponseEntity<ApiResponseDto> acceptInvitation(Long relationId) {
