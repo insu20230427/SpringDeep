@@ -374,7 +374,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">내용</label>
-                <input class="form-control" type="text" id="cardContent" name="cardContent"/>
+                <input class="form-control" type="text" id="cardContent" name="cardContent" style="width: 350px; height: 200px" />
             </div>
             <div class="mb-3">
                 <label class="form-label">색상</label>
@@ -457,8 +457,25 @@
     const modal = document.getElementById("cardUpdateModal")
     const CardModal = document.getElementById("cardModal")
     let cardIdTemp = null;
+
     function isModalOn(id) {
         cardIdTemp = id;
+
+        $.ajax({
+            type: 'GET',
+            url: '/card/' + id,
+            success: function (res) {
+                let data = res;
+
+                // console.log(data['title'], data['content']);
+                document.getElementById("cardTitle").value = data['title'];
+                document.getElementById("cardContent").value = data['content'];
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+
+
         return modal.style.display = "flex"
     }
 
