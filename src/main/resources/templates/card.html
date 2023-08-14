@@ -7,10 +7,16 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
+    <!--폰트 적용-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300&display=swap" rel="stylesheet">
+
+
     <title>My Trello-like App</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Gothic A1', sans-serif;
             background-color: lightgoldenrodyellow;
             margin: 0;
             padding: 0;
@@ -210,6 +216,11 @@
             margin-left: 8px;
         }
 
+        .myCommentBox {
+            background-color: #6f94c5;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
 
     </style>
 
@@ -340,7 +351,8 @@
 <body>
 
 <div class="logo-container">
-    <img src="https://i.postimg.cc/xT7WFpCC/LOGO.png" alt="Logo" class="logo-image">
+    <img src="https://i.postimg.cc/xT7WFpCC/LOGO.png" alt="Logo" class="logo-image" onclick="indexPage()">
+    <button id="inviteButton" onclick="showInvitePopup()" style="float: right;">Invite User</button>
 </div>
 
 
@@ -362,7 +374,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">내용</label>
-                <input class="form-control" type="text" id="cardContent" name="cardContent"/>
+                <input class="form-control" type="text" id="cardContent" name="cardContent" style="width: 350px; height: 200px" />
             </div>
             <div class="mb-3">
                 <label class="form-label">색상</label>
@@ -385,9 +397,15 @@
         <div class="close-area2">X</div>
         <div id="card-detail-box">
         </div>
-        <form>
-            <button onclick="createComment()">댓글작성</button>
-        </form>
+    </div>
+</div>
+
+<div id="invitePopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 20px; border-radius: 5px;">
+        <h4>Invite User to Board</h4>
+        <input type="text" id="usernameToInvite" placeholder="Enter username to invite">
+        <button onclick="sendInvite()">Invite</button>
+        <button onclick="hideInvitePopup()">Cancel</button>
     </div>
 </div>
 
@@ -397,14 +415,67 @@
         console.log(boardId);
         cardUpdateModalOff();
         cardModalOff()
+        hideInvitePopup()
         sectionDisplay();
     });
+
+    function sendInvite() {
+        console.log("도달")
+        let username = $('#usernameToInvite').val();
+        let boardId = localStorage.getItem("boardId");
+
+        let data = {
+            "username" : username,
+            "boardId" : boardId
+        }
+
+        console.log(data)
+
+        $.ajax({
+            type:'POST',
+            url:'/invitation/invite',
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function() {
+                alert("요청 성공");
+                window.location.reload();
+            }, error: function() {
+                alert("요청 실패")
+            }
+        })
+
+    }
+
+    function showInvitePopup() {
+        document.getElementById("invitePopup").style.display = "flex";
+    }
+
+    function hideInvitePopup() {
+        document.getElementById("invitePopup").style.display = "none";
+    }
 
     const modal = document.getElementById("cardUpdateModal")
     const CardModal = document.getElementById("cardModal")
     let cardIdTemp = null;
+
     function isModalOn(id) {
         cardIdTemp = id;
+
+        $.ajax({
+            type: 'GET',
+            url: '/card/' + id,
+            success: function (res) {
+                let data = res;
+
+                // console.log(data['title'], data['content']);
+                document.getElementById("cardTitle").value = data['title'];
+                document.getElementById("cardContent").value = data['content'];
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+
+
         return modal.style.display = "flex"
     }
 
@@ -419,10 +490,19 @@
 
     //-----------------card 상세 보기 modal---------//
     function isCardModalOn(cardId) {
-        // $('#card-detail-box').empty();
+        $('#card-detail-box').empty();
         getCommentList(cardId)
         return CardModal.style.display = "flex"
     }
+
+    function cardModalOff() {
+        CardModal.style.display = "none"
+    }
+
+    const closeBtn2 = CardModal.querySelector(".close-area2")
+    closeBtn2.addEventListener("click", e => {
+        cardModalOff();
+    })
 
     function getCommentList(cardId) {
         $.ajax({
@@ -430,16 +510,27 @@
             url: '/card/' + cardId,
             success: function (res) {
                 let data = res;
-                console.log("cardData")
-                console.log(data['commentResponseDtoList']);
+                // console.log("cardData")
+                // console.log(data['commentResponseDtoList']);
 
-                let tempHtml = `<div id="title-box"><h4>${data['title']}</h4></div>
+                let tempHtml = `<div id="title-box"><h2>${data['title']}</h2></div>
                                 <div id="content-box">${data['content']}</div>
-                                <div id="comment-box">
-                                `
+                                <div id="comment-box" class="myCommentBox">
+                                    <form>
+                                        <span class="mb-3">
+                                            <label class="form-label">댓글작성</label>
+                                            <input class="form-control" type="text" id="comment-content" name="comment"/>
+                                        </span>
+                                        <span class="mb-3">
+                                            <button type="button" onclick="commentCreate(${cardId})">댓글달기</button>
+                                        </span>
+                                    </form>`
 
                 for (let i = 0; i < data['commentResponseDtoList'].length; i++) {
-                    tempHtml += `<div> ${data['commentResponseDtoList'][i]['content']} </div>`;
+                    tempHtml += `<div style="margin: 5px 5px 5px 5px">${data['commentResponseDtoList'][i]['username']} :${data['commentResponseDtoList'][i]['content']}
+                                    <button onclick="commentUpdate(${data['commentResponseDtoList'][i]['id']})">수정</button>
+                                    <button onclick="commentDelete(${data['commentResponseDtoList'][i]['id']})">삭제</button>
+                                </div>`;
                 }
 
                 tempHtml += `</div>`
@@ -452,41 +543,67 @@
         });
     }
 
-    //check
-    function createComment() {
-        console.log("도달")
-    }
-        // let content = $('#cardContent').val();
-        //
-        // let requestData = {
-        //     "cardId" : cardId,
-        //     "content" : content
-        // }
-        //
-        // console.log("requestData")
-        // console.log(requestData)
-        //
-        // $.ajax({
-        //     url: "/card/comment",
-        //     method: "POST",
-        //     contentType: "application/json",
-        //     data: JSON.stringify(requestData),
-        //     success: function (response) {
-        //         window.location.reload();
-        //     },
-        //     error: function (error) {
-        //         console.error("Error creating section:", error);
-        //     }
-        // });
+    function commentCreate(cardId) {
+        let content = $('#comment-content').val();
 
-    function cardModalOff() {
-        CardModal.style.display = "none"
+        let data = {
+            "cardId" : cardId,
+            "content" : content
+        }
+
+        console.log(data)
+
+        $.ajax({
+            type:'POST',
+            url:'/card/comment',
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function() {
+                alert("성공");
+                window.location.reload();
+            }, error: function() {
+                alert("실패")
+            }
+        })
     }
 
-    const closeBtn2 = CardModal.querySelector(".close-area2")
-    closeBtn2.addEventListener("click", e => {
-        cardModalOff();
-    })
+    function commentUpdate(commentId) {
+        var content = prompt("변경할 내용을 입력해주세요")
+
+        let data = {
+            "content" : content
+        }
+
+        $.ajax({
+            type:'PUT',
+            url:'/card/comment/' + commentId,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function() {
+                alert("comment 수정 완료!");
+                window.location.reload();
+            }, error: function() {
+                alert("실패");
+            }
+        })
+    }
+
+    function commentDelete(commentId) {
+        console.log(commentId)
+
+        $.ajax({
+            url: '/card/comment/' + commentId, // 요청을 보낼 서버의 URL
+            method: 'DELETE', // 요청 메소드 (GET, POST 등)
+            success: function (response) {
+                alert("삭제 완료")
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("삭제 실패")
+                console.log(xhr);
+            }
+        });
+    }
 
     function sectionDisplay() {
         const boardId = localStorage.getItem("boardId");
@@ -496,8 +613,8 @@
             url: '/column/'+ boardId,
             success: function (res) {
                 let data = res['data'];
-                console.log("sectionData: ")
-                console.log(data)
+                // console.log("sectionData: ")
+                // console.log(data)
                 for (let i = 0; i < data.length; i++) { //보드 갯수만큼
 
                     let tempHtml1 = `<div class="card-container">`
@@ -506,10 +623,10 @@
                         for(let j = 0; j < data[i]['cards'].length; j++) { // card 갯수만큼
 
                             let tempHtml2 = `<div class="card" style="background-color: ${data[i]['cards'][j]['color']};" onclick="isCardModalOn(${data[i]['cards'][j]['id']})">
-                                                    <h4>${data[i]['cards'][j]['title']}</h4>
+                                                    <h3>${data[i]['cards'][j]['title']}</h3>
                                                     <p>${data[i]['cards'][j]['content']}</p>
-                                                    <button type="button" class="edit-card-button" onclick="isModalOn(${data[i]['cards'][j]['id']})">Edit</button>
-                                                    <button type="button" class="edit-card-button" onclick="deleteCard(${data[i]['cards'][j]['id']})">Delete</button>
+                                                    <button type="button" class="edit-card-button" onclick="isModalOn(${data[i]['cards'][j]['id']}); event.stopPropagation();">Edit</button>
+                                                    <button type="button" class="edit-card-button" onclick="deleteCard(${data[i]['cards'][j]['id']}); event.stopPropagation();">Delete</button>
                                              </div>`
 
                             tempHtml1 += tempHtml2
@@ -774,16 +891,6 @@
         }
     }
 
-
-    // function deletesection(sectionId) {
-    //     if (confirm('모두 삭제 하시겠습니까?')) {
-    //         const sectionElement = document.getElementById(sectionId);
-    //         const cardContainers = sectionElement.querySelectorAll(".card-container");
-    //         cardContainers.forEach(container => container.remove());
-    //         sectionElement.remove();
-    //     }
-    // }
-
     function updateCard() {
         let cardTitle = $('#cardTitle').val();
         let cardContent =$('#cardContent').val();
@@ -831,203 +938,9 @@
         });
     }
 
-    // ...
-
-    // function closeCardPopup(cardTitle) {
-    //     const popup = document.querySelector(".card-popup");
-    //     if (popup) {
-    //         const popupTitle = popup.querySelector("h3").textContent;
-    //         if (popupTitle === cardTitle) {
-    //             popup.remove(); // Close the popup if it's open for the deleted card
-    //         }
-    //     }
-    // }
-
-
-
-
-    // function openCard(cardElement) {
-    //     if (event.target.classsection.contains('edit-card-button') || event.target.classsection.contains('add-card-button') || event.target.classsection.contains('delete-card-button')) {
-    //         return; // Don't open the popup for edit, save, or delete actions
-    //     }
-    //
-    //     const cardTitleElement = cardElement.querySelector('h4');
-    //     const cardTitle = cardTitleElement.textContent;
-    //     const cardContent = cardElement.querySelector('p').textContent;
-    //
-    //     const popupContent = `
-    //     <div class="card-popup">
-    //         <div class="card-popup-content">
-    //             <div class="card-section">
-    //                 <h3>${cardTitle}</h3>
-    //             </div>
-    //             <div class="card-section">
-    //                 <p>${cardContent}</p>
-    //             </div>
-    //             <div class="card-section comments">
-    //                 <h4>Comments</h4>
-    //                 <div id="commentsContainer"></div>
-    //                 <input type="text" class="input-field" placeholder="Add a comment">
-    //                 <button onclick="addComment(this, '${cardTitle}')">Add Comment</button>
-    //             </div>
-    //             <button class="close-popup-button" onclick="closeCardPopup('${cardTitle}')">Close</button>
-    //         </div>
-    //     </div>
-    // `;
-    //
-    //     document.body.insertAdjacentHTML("beforeend", popupContent);
-    //     loadComments(cardTitle);
-    // }
-
-
-    // function addComment(buttonElement, cardTitle) {
-    //     const commentInput = buttonElement.previousElementSibling;
-    //     const comment = commentInput.value;
-    //
-    //     if (comment.trim() !== "") {
-    //         const commentsContainer = document.getElementById("commentsContainer");
-    //         const commentElement = document.createElement("div");
-    //         commentElement.className = "comment";
-    //
-    //         const commentText = document.createElement("span");
-    //         commentText.textContent = comment;
-    //
-    //         // Store the comment index as a custom attribute
-    //         const commentIndex = getComments(cardTitle).length;
-    //         commentText.setAttribute("data-index", commentIndex);
-    //
-    //         const editButton = document.createElement("button");
-    //         editButton.textContent = "Edit";
-    //         editButton.onclick = function () {
-    //             editComment(commentText, cardTitle, commentIndex);
-    //         };
-    //
-    //         const deleteButton = document.createElement("button");
-    //         deleteButton.textContent = "Delete";
-    //         deleteButton.onclick = function () {
-    //             deleteComment(cardTitle, commentIndex);
-    //             loadComments(cardTitle);
-    //         };
-    //
-    //         commentElement.appendChild(commentText);
-    //         commentElement.appendChild(editButton);
-    //         commentElement.appendChild(deleteButton);
-    //
-    //         commentsContainer.appendChild(commentElement);
-    //         commentInput.value = "";
-    //
-    //         saveComment(cardTitle, comment);
-    //     }
-    // }
-
-
-    // let comments = {};
-    // const cardComments = {};
-
-    // function editComment(commentElement, cardTitle, index) {
-    //     const currentComment = commentElement.textContent;
-    //     const inputField = document.createElement("input");
-    //     inputField.type = "text";
-    //     inputField.value = currentComment;
-    //
-    //     const saveButton = document.createElement("button");
-    //     saveButton.textContent = "Save";
-    //     saveButton.onclick = function () {
-    //         saveEditedComment(commentElement, cardTitle, index, inputField.value);
-    //     };
-    //
-    //     const cancelButton = document.createElement("button");
-    //     cancelButton.textContent = "Cancel";
-    //     cancelButton.onclick = function () {
-    //         commentElement.textContent = currentComment;
-    //         commentElement.appendChild(editButton);
-    //         commentElement.appendChild(deleteButton);
-    //     };
-    //
-    //     commentElement.innerHTML = "";
-    //     commentElement.appendChild(inputField);
-    //     commentElement.appendChild(saveButton);
-    //     commentElement.appendChild(cancelButton);
-    // }
-
-
-    // function saveEditedComment(commentElement, cardTitle, index, newComment) {
-    //     const cardComments = comments[cardTitle];
-    //     if (cardComments) {
-    //         cardComments[index] = newComment;
-    //         localStorage.setItem(cardTitle, JSON.stringify(cardComments));
-    //         commentElement.textContent = newComment;
-    //
-    //         commentElement.appendChild(editButton); // Append the editButton
-    //         commentElement.appendChild(deleteButton); // Append the deleteButton
-    //     }
-    // }
-
-
-    // function deleteComment(cardTitle, index) {
-    //     const cardComments = getComments(cardTitle);
-    //     if (cardComments) {
-    //         cardComments.splice(index, 1); // Remove the comment at the specified index
-    //         localStorage.setItem(cardTitle, JSON.stringify(cardComments)); // Save the updated comments
-    //     }
-    // }
-
-    // function loadComments(cardTitle) {
-    //     const commentsContainer = document.getElementById("commentsContainer");
-    //     commentsContainer.innerHTML = ""; // Clear previous comments
-    //
-    //     const cardComments = getComments(cardTitle); // Retrieve comments for the card
-    //     if (cardComments) {
-    //         cardComments.forEach((comment, index) => {
-    //             const commentElement = document.createElement("div");
-    //             commentElement.className = "comment";
-    //
-    //             const commentText = document.createElement("span");
-    //             commentText.textContent = comment;
-    //
-    //             const editButton = document.createElement("button");
-    //             editButton.textContent = "Edit";
-    //             editButton.onclick = function () {
-    //                 editComment(commentText, cardTitle, index);
-    //             };
-    //
-    //             const deleteButton = document.createElement("button");
-    //             deleteButton.textContent = "Delete";
-    //             deleteButton.onclick = function () {
-    //                 deleteComment(cardTitle, index);
-    //                 loadComments(cardTitle); // Reload comments after deletion
-    //             };
-    //
-    //             commentElement.appendChild(commentText);
-    //             commentElement.appendChild(editButton);
-    //             commentElement.appendChild(deleteButton);
-    //
-    //             commentsContainer.appendChild(commentElement);
-    //         });
-    //     }
-    // }
-
-    // function saveComment(cardTitle, comment) {
-    //     const cardComments = comments[cardTitle] || [];
-    //     cardComments.push(comment);
-    //     comments[cardTitle] = cardComments;
-    //     localStorage.setItem(cardTitle, JSON.stringify(cardComments));
-    // }
-
-    // function getComments(cardTitle) {
-    //     const storedComments = localStorage.getItem(cardTitle);
-    //     return storedComments ? JSON.parse(storedComments) : [];
-    // }
-
-    // function closeCardPopup(cardTitle) {
-    //     const popup = document.querySelector(".card-popup");
-    //     if (popup) {
-    //         const popupTitle = popup.querySelector("h3").textContent;
-    //         if (popupTitle === cardTitle) {
-    //             popup.remove(); // Close the popup if it's open for the deleted card
-    //         }
-    //     }
-    // }
+    function indexPage() {
+        window.location.href = "/";
+    }
 </script>
 </body>
 </html>

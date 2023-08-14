@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +10,17 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
+    <!--폰트 적용-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+
     <title>Trello-like App</title>
     <style>
+
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Do Hyeon', sans-serif;
             margin: 90px;
             padding: 0;
             background-image: url('https://i.postimg.cc/PJSPCxY2/1.png');
@@ -345,7 +352,9 @@
 <div class="login-signup-container">
     <div class="login-signup-buttons">
         <button onclick="openLoginForm()">로그인</button>
-        <button onclick="openSignupForm()">회원가입</button><br>
+        <button onclick="openSignupForm()">회원가입</button>
+        <button id="deleteCookieButton">로그아웃</button>
+        <br>
 
         <button onclick="confirmModalOn()">요청확인</button>
 
@@ -441,7 +450,46 @@
         confirmModalOff()
         setBoard()
         invitedDisplay()
+        getUsername()
     });
+
+    // <div className="user-name">
+    //     <span> </span>님 안녕하세요
+    // </div>
+    function getUsername() {
+        $.ajax({
+            type: 'GET',
+            url: '/auth/get-user',
+            success: function (res) {
+                let data = res;
+                const newBoard = document.createElement("div");
+                newBoard.className = "user-name";
+                newBoard.innerHTML = `<span>${data} </span>님 안녕하세요`
+
+                var container = document.querySelector(".login-signup-container");
+
+                var firstChild = container.firstChild; // 첫 번째 자식 요소 가져오기
+                container.insertBefore(newBoard, firstChild);
+            }, error: function (res) {
+                window.location.href = host + '';
+            }
+        });
+    }
+
+    // 로그아웃 로직
+    function deleteCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+
+    // 버튼 클릭 이벤트를 처리하는 함수를 정의합니다.
+    function deleteAuthorizationCookie() {
+        deleteCookie('Authorization');
+        window.location.reload()
+    }
+
+    // 버튼 클릭 시 함수를 호출하도록 이벤트 리스너를 추가합니다.
+    document.getElementById('deleteCookieButton').addEventListener('click', deleteAuthorizationCookie);
+    //로그아웃 로직 끝
 
     const modal = document.getElementById("modal")
     const updateModal = document.getElementById("updatemodal")
@@ -514,15 +562,8 @@
             success: function(response) {
                 alert("성공");
                 window.location.reload();
-            }, error: function(xhr, textStatus, errorThrown) {
-                const errorDiv = document.getElementById('update-failed');
-                errorDiv.style.display = 'block';
-
-                let message = xhr['responseJSON']['data'];
-                errorDiv.innerHTML += `<br>`;
-                Object.keys(message).forEach(function(key) {
-                    errorDiv.innerHTML += message[key] + `<br>`;
-                });
+            }, error: function() {
+                alert("실패")
             }
         })
 

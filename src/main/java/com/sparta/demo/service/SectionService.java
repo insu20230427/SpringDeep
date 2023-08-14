@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,8 +33,13 @@ public class SectionService {
 
     //해당 보드 전체 섹션 조회
     public List<SectionResponseDto> showSection(Long boardId) {
-        List<SectionResponseDto> sectionList = sectionRepository.findByBoardId(boardId).stream().map(SectionResponseDto::new).toList(); //cardList 받아오는지 확인
-        return sectionList;
+//        List<SectionResponseDto> sectionList = sectionRepository.findByBoardId(boardId).stream().map(SectionResponseDto::new).toList(); //cardList 받아오는지 확인
+        List<Section> sectionList = sectionRepository.findByBoardId(boardId);
+        List<SectionResponseDto> sectionResponseDtoList = new ArrayList<>();
+        for (int i = sectionList.size() - 1; i >= 0; i--) {
+            sectionResponseDtoList.add(new SectionResponseDto(sectionList.get(i)));
+        }
+        return sectionResponseDtoList;
     }
 
     //섹션 수정
